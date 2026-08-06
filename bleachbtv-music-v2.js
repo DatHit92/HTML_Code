@@ -1,4 +1,3 @@
-<script>
 $(document).ready(function() {
 
   $('.music-min').each(function() {
@@ -82,4 +81,3 @@ $(document).ready(function() {
   });
 
 });
-</script>
