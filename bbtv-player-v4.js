@@ -369,29 +369,33 @@
   }
 
   function tick() {
-    analyser.getByteFrequencyData(data);
-    var bass = 0;
-    for (var i = 0; i < 8; i++) bass += data[i];
-    bass = bass / 8;
+  analyser.getByteFrequencyData(data);
+  var bass = 0;
+  for (var i = 0; i < 8; i++) bass += data[i];
+  bass = bass / 8;
 
-    history.push(bass);
-    if (history.length > 30) history.shift();
-    var avg = history.reduce(function (a, b) { return a + b; }, 0) / history.length;
+  var avg = history.length
+    ? history.reduce(function (a, b) { return a + b; }, 0) / history.length
+    : bass;
 
-    var now = performance.now();
-    if (bass > avg * 1.25 && bass > 40 && now - lastBeat > 200) {
-      beatVal = 1;
-      lastBeat = now;
-    } else {
-      beatVal *= 0.88;
-    }
+  var capped = Math.min(bass, avg * 1.15 || bass);
+  history.push(capped);
+  if (history.length > 30) history.shift();
 
-    targets.forEach(function (t) {
-      t.style.setProperty('--bbv-beat', beatVal.toFixed(3));
-    });
-
-    raf = requestAnimationFrame(tick);
+  var now = performance.now();
+  if (bass > avg * 1.25 && bass > 40 && now - lastBeat > 200) {
+    beatVal = 1;
+    lastBeat = now;
+  } else {
+    beatVal *= 0.88;
   }
+
+  targets.forEach(function (t) {
+    t.style.setProperty('--bbv-beat', beatVal.toFixed(3));
+  });
+
+  raf = requestAnimationFrame(tick);
+}
 
   audio.addEventListener('play', function () {
     if (!ctx && !ensureContext()) return;
