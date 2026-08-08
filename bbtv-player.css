@@ -1,5 +1,13 @@
 /* ══════════════════ MUSIC PLAYER (BBV) — LEGACY VARIANT ══════════════════ */
 
+.bbv-legacy-bar.bbv-vol-open .bbv-vol-panel { display: block; }
+.bbv-free-player.bbv-vol-open .bbv-vol-panel { display: block; }
+
+.bbv-fx-beat {
+    --bbv-beat: 0;
+    box-shadow: 0 0 calc(8px + var(--bbv-beat) * 24px) rgba(192,57,43, calc(0.3 + var(--bbv-beat) * 0.6));
+}
+
 .bbv-player.bbv-legacy {
     position: relative;
     background: none;
