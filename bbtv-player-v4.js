@@ -98,6 +98,7 @@
   playerBox.setAttribute('data-count', tracks.length);
 
   var audio = new Audio();
+  audio.crossOrigin = 'anonymous';
   audio.preload = 'metadata';
 
   var prevBtn = makeBtn('bbv-prev', 'prev');
@@ -125,6 +126,7 @@
     el: playerBox, playBtn: playBtn, prevBtn: prevBtn, nextBtn: nextBtn,
     seek: seek, vol: vol, volToggle: volToggle
   }, tracks, function () {}); // no visuals tied to tracks — image/text are unlinked
+  attachBeatSync(el, audio);
 }
 
   function initLegacy(el) {
@@ -138,6 +140,7 @@
   bar.setAttribute('data-count', tracks.length);
 
   var audio = new Audio();
+  audio.crossOrigin = 'anonymous';
   audio.preload = 'metadata';
 
   var prevBtn = makeBtn('bbv-prev', 'prev');
@@ -165,6 +168,7 @@
     el: bar, playBtn: playBtn, prevBtn: prevBtn, nextBtn: nextBtn,
     seek: seek, vol: vol, volToggle: volToggle
   }, tracks, function () {});
+  attachBeatSync(el, audio);
 }
 
   function initSig(el) {
@@ -179,6 +183,7 @@
   el.setAttribute('data-count', tracks.length);
 
   var audio = new Audio();
+  audio.crossOrigin = 'anonymous';
   audio.preload = 'metadata';
 
   var imageBox = document.createElement('div');
@@ -239,6 +244,7 @@
     el: el, playBtn: playBtn, prevBtn: prevBtn, nextBtn: nextBtn,
     seek: seek, vol: vol, volToggle: volToggle
   }, tracks, applyVisuals);
+  attachBeatSync(el, audio);
 }
 
   function initStandard(el) {
@@ -249,6 +255,7 @@
     el.setAttribute('data-count', tracks.length);
 
     var audio = new Audio();
+    audio.crossOrigin = 'anonymous';
     audio.preload = 'metadata';
 
     var bg = document.createElement('div');
@@ -324,7 +331,72 @@
       el: el, playBtn: playBtn, prevBtn: prevBtn, nextBtn: nextBtn,
       seek: seek, vol: vol, volToggle: volToggle
     }, tracks, applyVisuals);
+    attachBeatSync(el, audio);
   }
+
+  function attachBeatSync(root, audio) {
+  var targets = root.querySelectorAll('.bbv-fx-beat');
+  if (!targets.length) return;
+
+  var ctx, analyser, data;
+  var raf = null;
+  var beatVal = 0;
+  var lastBeat = 0;
+  var history = [];
+
+  function ensureContext() {
+    if (ctx) return true;
+    try {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      ctx = new AC();
+      var source = ctx.createMediaElementSource(audio);
+      analyser = ctx.createAnalyser();
+      analyser.fftSize = 128;
+      data = new Uint8Array(analyser.frequencyBinCount);
+      source.connect(analyser);
+      analyser.connect(ctx.destination);
+      return true;
+    } catch (e) {
+      return false; // CORS-blocked or unsupported — fail silently
+    }
+  }
+
+  function tick() {
+    analyser.getByteFrequencyData(data);
+    var bass = 0;
+    for (var i = 0; i < 8; i++) bass += data[i];
+    bass = bass / 8;
+
+    history.push(bass);
+    if (history.length > 30) history.shift();
+    var avg = history.reduce(function (a, b) { return a + b; }, 0) / history.length;
+
+    var now = performance.now();
+    if (bass > avg * 1.25 && bass > 40 && now - lastBeat > 200) {
+      beatVal = 1;
+      lastBeat = now;
+    } else {
+      beatVal *= 0.88;
+    }
+
+    targets.forEach(function (t) {
+      t.style.setProperty('--bbv-beat', beatVal.toFixed(3));
+    });
+
+    raf = requestAnimationFrame(tick);
+  }
+
+  audio.addEventListener('play', function () {
+    if (!ctx && !ensureContext()) return;
+    if (ctx.state === 'suspended') ctx.resume();
+    if (!raf) raf = requestAnimationFrame(tick);
+  });
+
+  audio.addEventListener('pause', function () {
+    if (raf) { cancelAnimationFrame(raf); raf = null; }
+    targets.forEach(function (t) { t.style.setProperty('--bbv-beat', 0); });
+  });
+}
 
   document.addEventListener('DOMContentLoaded', function () {
   document.querySelectorAll('.bbv-player').forEach(function (el) {
