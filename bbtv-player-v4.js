@@ -97,8 +97,9 @@
   playerBox.innerHTML = '';
   playerBox.setAttribute('data-count', tracks.length);
 
+  var wantsBeat = el.hasAttribute('data-beat');
   var audio = new Audio();
-  audio.crossOrigin = 'anonymous';
+  if (wantsBeat) audio.crossOrigin = 'anonymous';
   audio.preload = 'metadata';
 
   var prevBtn = makeBtn('bbv-prev', 'prev');
@@ -126,7 +127,7 @@
     el: playerBox, playBtn: playBtn, prevBtn: prevBtn, nextBtn: nextBtn,
     seek: seek, vol: vol, volToggle: volToggle
   }, tracks, function () {}); // no visuals tied to tracks — image/text are unlinked
-  attachBeatSync(el, audio);
+  if (wantsBeat) attachBeatSync(el, audio);
 }
 
   function initLegacy(el) {
@@ -139,8 +140,9 @@
   bar.innerHTML = '';
   bar.setAttribute('data-count', tracks.length);
 
+  var wantsBeat = el.hasAttribute('data-beat');
   var audio = new Audio();
-  audio.crossOrigin = 'anonymous';
+  if (wantsBeat) audio.crossOrigin = 'anonymous';
   audio.preload = 'metadata';
 
   var prevBtn = makeBtn('bbv-prev', 'prev');
@@ -168,7 +170,7 @@
     el: bar, playBtn: playBtn, prevBtn: prevBtn, nextBtn: nextBtn,
     seek: seek, vol: vol, volToggle: volToggle
   }, tracks, function () {});
-  attachBeatSync(el, audio);
+  if (wantsBeat) attachBeatSync(el, audio);
 }
 
   function initSig(el) {
@@ -178,16 +180,18 @@
   var w = el.getAttribute('data-width');
   var h = el.getAttribute('data-height');
   var isFree = el.classList.contains('bbv-img-free');
+  var wantsBeat = el.hasAttribute('data-beat');
 
   el.innerHTML = '';
   el.setAttribute('data-count', tracks.length);
 
   var audio = new Audio();
-  audio.crossOrigin = 'anonymous';
+  if (wantsBeat) audio.crossOrigin = 'anonymous';
   audio.preload = 'metadata';
 
   var imageBox = document.createElement('div');
   imageBox.className = 'bbv-sig-image-box';
+  if (wantsBeat) imageBox.classList.add('bbv-fx-beat');
   if (!isFree) {
     if (w) imageBox.style.width = /^\d+$/.test(w) ? w + 'px' : w;
     if (h) imageBox.style.height = /^\d+$/.test(h) ? h + 'px' : h;
@@ -244,95 +248,98 @@
     el: el, playBtn: playBtn, prevBtn: prevBtn, nextBtn: nextBtn,
     seek: seek, vol: vol, volToggle: volToggle
   }, tracks, applyVisuals);
-  attachBeatSync(el, audio);
+  if (wantsBeat) attachBeatSync(el, audio);
 }
 
   function initStandard(el) {
-    var tracks = readTracks(el);
-    if (!tracks.length) return;
+  var tracks = readTracks(el);
+  if (!tracks.length) return;
 
-    el.innerHTML = '';
-    el.setAttribute('data-count', tracks.length);
+  var wantsBeat = el.hasAttribute('data-beat');
 
-    var audio = new Audio();
-    audio.crossOrigin = 'anonymous';
-    audio.preload = 'metadata';
+  el.innerHTML = '';
+  el.setAttribute('data-count', tracks.length);
 
-    var bg = document.createElement('div');
-    bg.className = 'bbv-bg';
+  var audio = new Audio();
+  if (wantsBeat) audio.crossOrigin = 'anonymous';
+  audio.preload = 'metadata';
 
-    var shade = document.createElement('div');
-    shade.className = 'bbv-shade';
+  var bg = document.createElement('div');
+  bg.className = 'bbv-bg';
 
-    var disc = document.createElement('div');
-    disc.className = 'bbv-disc';
-    var coverImg = document.createElement('img');
-    coverImg.className = 'bbv-disc-img';
-    disc.appendChild(coverImg);
+  var shade = document.createElement('div');
+  shade.className = 'bbv-shade';
 
-    var main = document.createElement('div');
-    main.className = 'bbv-main';
+  var disc = document.createElement('div');
+  disc.className = 'bbv-disc';
+  if (wantsBeat) disc.classList.add('bbv-fx-beat');
+  var coverImg = document.createElement('img');
+  coverImg.className = 'bbv-disc-img';
+  disc.appendChild(coverImg);
 
-    var info = document.createElement('div');
-    info.className = 'bbv-info';
-    var titleEl = document.createElement('div');
-    titleEl.className = 'bbv-title';
-    var artistEl = document.createElement('div');
-    artistEl.className = 'bbv-artist';
-    info.appendChild(titleEl);
-    info.appendChild(artistEl);
+  var main = document.createElement('div');
+  main.className = 'bbv-main';
 
-    var body = document.createElement('div');
-    body.className = 'bbv-body';
-    var buttons = document.createElement('div');
-    buttons.className = 'bbv-buttons';
+  var info = document.createElement('div');
+  info.className = 'bbv-info';
+  var titleEl = document.createElement('div');
+  titleEl.className = 'bbv-title';
+  var artistEl = document.createElement('div');
+  artistEl.className = 'bbv-artist';
+  info.appendChild(titleEl);
+  info.appendChild(artistEl);
 
-    var prevBtn = makeBtn('bbv-prev', 'prev');
-    var playBtn = makeBtn('bbv-play', 'play');
-    var nextBtn = makeBtn('bbv-next', 'next');
-    var seek = makeRange('bbv-seek', 0, 100, 0);
-    var volToggle = document.createElement('div');
-    volToggle.className = 'bbv-vol-toggle';
-    volToggle.innerHTML = buildIcon('vol');
+  var body = document.createElement('div');
+  body.className = 'bbv-body';
+  var buttons = document.createElement('div');
+  buttons.className = 'bbv-buttons';
 
-    var volPanel = document.createElement('div');
-    volPanel.className = 'bbv-vol-panel';
-    var vol = makeRange('bbv-vol', 0, 100, 80);
-    audio.volume = 0.8;
-    volPanel.appendChild(vol);
+  var prevBtn = makeBtn('bbv-prev', 'prev');
+  var playBtn = makeBtn('bbv-play', 'play');
+  var nextBtn = makeBtn('bbv-next', 'next');
+  var seek = makeRange('bbv-seek', 0, 100, 0);
+  var volToggle = document.createElement('div');
+  volToggle.className = 'bbv-vol-toggle';
+  volToggle.innerHTML = buildIcon('vol');
 
-    buttons.appendChild(prevBtn);
-    buttons.appendChild(playBtn);
-    buttons.appendChild(nextBtn);
-    buttons.appendChild(volToggle);
-    body.appendChild(buttons);
-    body.appendChild(seek);
-    main.appendChild(info);
-    main.appendChild(body);
+  var volPanel = document.createElement('div');
+  volPanel.className = 'bbv-vol-panel';
+  var vol = makeRange('bbv-vol', 0, 100, 80);
+  audio.volume = 0.8;
+  volPanel.appendChild(vol);
 
-    el.appendChild(bg);
-    el.appendChild(shade);
-    el.appendChild(disc);
-    el.appendChild(main);
-    el.appendChild(volPanel);
+  buttons.appendChild(prevBtn);
+  buttons.appendChild(playBtn);
+  buttons.appendChild(nextBtn);
+  buttons.appendChild(volToggle);
+  body.appendChild(buttons);
+  body.appendChild(seek);
+  main.appendChild(info);
+  main.appendChild(body);
 
-    function applyVisuals(t) {
-      titleEl.textContent = t.title;
-      artistEl.textContent = t.artist;
+  el.appendChild(bg);
+  el.appendChild(shade);
+  el.appendChild(disc);
+  el.appendChild(main);
+  el.appendChild(volPanel);
 
-      if (t.cover) { coverImg.src = t.cover; disc.classList.add('bbv-has-cover'); }
-      else { coverImg.removeAttribute('src'); disc.classList.remove('bbv-has-cover'); }
+  function applyVisuals(t) {
+    titleEl.textContent = t.title;
+    artistEl.textContent = t.artist;
 
-      if (t.bg) { el.style.setProperty('--bbv-bg', 'url(' + t.bg + ')'); el.classList.add('bbv-has-bg'); }
-      else { el.style.removeProperty('--bbv-bg'); el.classList.remove('bbv-has-bg'); }
-    }
+    if (t.cover) { coverImg.src = t.cover; disc.classList.add('bbv-has-cover'); }
+    else { coverImg.removeAttribute('src'); disc.classList.remove('bbv-has-cover'); }
 
-    wireCommon(audio, {
-      el: el, playBtn: playBtn, prevBtn: prevBtn, nextBtn: nextBtn,
-      seek: seek, vol: vol, volToggle: volToggle
-    }, tracks, applyVisuals);
-    attachBeatSync(el, audio);
+    if (t.bg) { el.style.setProperty('--bbv-bg', 'url(' + t.bg + ')'); el.classList.add('bbv-has-bg'); }
+    else { el.style.removeProperty('--bbv-bg'); el.classList.remove('bbv-has-bg'); }
   }
+
+  wireCommon(audio, {
+    el: el, playBtn: playBtn, prevBtn: prevBtn, nextBtn: nextBtn,
+    seek: seek, vol: vol, volToggle: volToggle
+  }, tracks, applyVisuals);
+  if (wantsBeat) attachBeatSync(el, audio);
+}
 
   function attachBeatSync(root, audio) {
   var targets = root.querySelectorAll('.bbv-fx-beat');
