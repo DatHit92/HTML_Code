@@ -88,64 +88,78 @@
   }
 
   function initSig(el) {
-    var tracks = readTracks(el);
-    if (!tracks.length) return;
+  var tracks = readTracks(el);
+  if (!tracks.length) return;
 
-    var w = el.getAttribute('data-width');
-    var h = el.getAttribute('data-height');
-    if (w) el.style.width = /^\d+$/.test(w) ? w + 'px' : w;
-    if (h) el.style.height = /^\d+$/.test(h) ? h + 'px' : h;
+  var w = el.getAttribute('data-width');
+  var h = el.getAttribute('data-height');
+  var isFree = el.classList.contains('bbv-img-free');
 
-    el.innerHTML = '';
-    el.setAttribute('data-count', tracks.length);
+  el.innerHTML = '';
+  el.setAttribute('data-count', tracks.length);
 
-    var audio = new Audio();
-    audio.preload = 'metadata';
+  var audio = new Audio();
+  audio.preload = 'metadata';
 
-    var img = document.createElement('img');
-    img.className = 'bbv-sig-img';
-
-    var pill = document.createElement('div');
-    pill.className = 'bbv-sig-pill';
-
-    var prevBtn = makeBtn('bbv-prev', 'prev');
-    var playBtn = makeBtn('bbv-play', 'play');
-    var nextBtn = makeBtn('bbv-next', 'next');
-    var seek = makeRange('bbv-seek', 0, 100, 0);
-    var volToggle = document.createElement('div');
-    volToggle.className = 'bbv-vol-toggle';
-    volToggle.innerHTML = buildIcon('vol');
-
-    var volPanel = document.createElement('div');
-    volPanel.className = 'bbv-vol-panel';
-    var vol = makeRange('bbv-vol', 0, 100, 80);
-    audio.volume = 0.8;
-    volPanel.appendChild(vol);
-
-    pill.appendChild(prevBtn);
-    pill.appendChild(playBtn);
-    pill.appendChild(seek);
-    pill.appendChild(nextBtn);
-    pill.appendChild(volToggle);
-
-    el.appendChild(img);
-    el.appendChild(pill);
-    el.appendChild(volPanel);
-
-    pill.addEventListener('click', function (e) {
-      if (e.target === pill) pill.classList.toggle('bbv-pill-open');
-    });
-
-    function applyVisuals(t) {
-      if (t.bg) { img.src = t.bg; img.style.display = 'block'; }
-      else { img.removeAttribute('src'); img.style.display = 'none'; }
-    }
-
-    wireCommon(audio, {
-      el: el, playBtn: playBtn, prevBtn: prevBtn, nextBtn: nextBtn,
-      seek: seek, vol: vol, volToggle: volToggle
-    }, tracks, applyVisuals);
+  var imageBox = document.createElement('div');
+  imageBox.className = 'bbv-sig-image-box';
+  if (!isFree) {
+    if (w) imageBox.style.width = /^\d+$/.test(w) ? w + 'px' : w;
+    if (h) imageBox.style.height = /^\d+$/.test(h) ? h + 'px' : h;
+  } else if (w) {
+    imageBox.style.maxWidth = /^\d+$/.test(w) ? w + 'px' : w;
   }
+
+  var img = document.createElement('img');
+  img.className = 'bbv-sig-img';
+  imageBox.appendChild(img);
+
+  var playerBox = document.createElement('div');
+  playerBox.className = 'bbv-sig-player-box';
+
+  var pill = document.createElement('div');
+  pill.className = 'bbv-sig-pill';
+
+  var prevBtn = makeBtn('bbv-prev', 'prev');
+  var playBtn = makeBtn('bbv-play', 'play');
+  var nextBtn = makeBtn('bbv-next', 'next');
+  var seek = makeRange('bbv-seek', 0, 100, 0);
+  var volToggle = document.createElement('div');
+  volToggle.className = 'bbv-vol-toggle';
+  volToggle.innerHTML = buildIcon('vol');
+
+  var volPanel = document.createElement('div');
+  volPanel.className = 'bbv-vol-panel';
+  var vol = makeRange('bbv-vol', 0, 100, 80);
+  audio.volume = 0.8;
+  volPanel.appendChild(vol);
+
+  pill.appendChild(prevBtn);
+  pill.appendChild(playBtn);
+  pill.appendChild(seek);
+  pill.appendChild(nextBtn);
+  pill.appendChild(volToggle);
+
+  playerBox.appendChild(pill);
+  playerBox.appendChild(volPanel);
+
+  el.appendChild(imageBox);
+  el.appendChild(playerBox);
+
+  pill.addEventListener('click', function (e) {
+    if (e.target === pill) pill.classList.toggle('bbv-pill-open');
+  });
+
+  function applyVisuals(t) {
+    if (t.bg) { img.src = t.bg; img.style.display = 'block'; }
+    else { img.removeAttribute('src'); img.style.display = 'none'; }
+  }
+
+  wireCommon(audio, {
+    el: el, playBtn: playBtn, prevBtn: prevBtn, nextBtn: nextBtn,
+    seek: seek, vol: vol, volToggle: volToggle
+  }, tracks, applyVisuals);
+}
 
   function initStandard(el) {
     var tracks = readTracks(el);
