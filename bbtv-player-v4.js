@@ -127,6 +127,46 @@
   }, tracks, function () {}); // no visuals tied to tracks — image/text are unlinked
 }
 
+  function initLegacy(el) {
+  var bar = el.querySelector('.bbv-legacy-bar');
+  if (!bar) return;
+
+  var tracks = readTracks(bar);
+  if (!tracks.length) return;
+
+  bar.innerHTML = '';
+  bar.setAttribute('data-count', tracks.length);
+
+  var audio = new Audio();
+  audio.preload = 'metadata';
+
+  var prevBtn = makeBtn('bbv-prev', 'prev');
+  var playBtn = makeBtn('bbv-play', 'play');
+  var nextBtn = makeBtn('bbv-next', 'next');
+  var seek = makeRange('bbv-seek', 0, 100, 0);
+  var volToggle = document.createElement('div');
+  volToggle.className = 'bbv-vol-toggle';
+  volToggle.innerHTML = buildIcon('vol');
+
+  var volPanel = document.createElement('div');
+  volPanel.className = 'bbv-vol-panel';
+  var vol = makeRange('bbv-vol', 0, 100, 80);
+  audio.volume = 0.8;
+  volPanel.appendChild(vol);
+
+  bar.appendChild(prevBtn);
+  bar.appendChild(playBtn);
+  bar.appendChild(seek);
+  bar.appendChild(nextBtn);
+  bar.appendChild(volToggle);
+  bar.appendChild(volPanel);
+
+  wireCommon(audio, {
+    el: bar, playBtn: playBtn, prevBtn: prevBtn, nextBtn: nextBtn,
+    seek: seek, vol: vol, volToggle: volToggle
+  }, tracks, function () {});
+}
+
   function initSig(el) {
   var tracks = readTracks(el);
   if (!tracks.length) return;
@@ -290,6 +330,7 @@
   document.querySelectorAll('.bbv-player').forEach(function (el) {
     if (el.classList.contains('bbv-sig')) initSig(el);
     else if (el.classList.contains('bbv-free')) initFree(el);
+    else if (el.classList.contains('bbv-legacy')) initLegacy(el);
     else initStandard(el);
   });
 });
