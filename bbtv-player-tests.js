@@ -362,9 +362,11 @@
       data = new Uint8Array(analyser.frequencyBinCount);
       source.connect(analyser);
       analyser.connect(ctx.destination);
+      console.log('bbv beat: context ok, state=', ctx.state, 'crossOrigin=', audio.crossOrigin);
       return true;
     } catch (e) {
-      return false; // CORS-blocked or unsupported — fail silently
+      console.log('bbv beat: ensureContext failed', e);
+      return false;
     }
   }
 
@@ -373,6 +375,7 @@
   var bass = 0;
   for (var i = 0; i < 8; i++) bass += data[i];
   bass = bass / 8;
+  console.log('bbv beat: bass=', bass.toFixed(1), 'ctxState=', ctx.state);
 
   var avg = history.length
     ? history.reduce(function (a, b) { return a + b; }, 0) / history.length
