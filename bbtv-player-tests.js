@@ -345,11 +345,11 @@
   var targets = root.querySelectorAll('.bbv-fx-beat');
   if (!targets.length) return;
 
-  var ctx, analyser, data;
+  var ctx, analyser, data, prevData;
   var raf = null;
   var beatVal = 0;
   var lastBeat = 0;
-  var baseline = null;
+  var fluxHistory = [];
 
   function ensureContext() {
     if (ctx) return true;
@@ -360,29 +360,34 @@
       analyser = ctx.createAnalyser();
       analyser.fftSize = 128;
       data = new Uint8Array(analyser.frequencyBinCount);
+      prevData = new Uint8Array(analyser.frequencyBinCount);
       source.connect(analyser);
       analyser.connect(ctx.destination);
-      console.log('bbv beat: context ok, state=', ctx.state, 'crossOrigin=', audio.crossOrigin);
       return true;
     } catch (e) {
-      console.log('bbv beat: ensureContext failed', e);
       return false;
     }
   }
 
   function tick() {
     analyser.getByteFrequencyData(data);
-    var bass = 0;
-    for (var i = 0; i < 8; i++) bass += data[i];
-    bass = bass / 8;
 
-    // slow exponential moving average as the baseline — not capped,
-    // decays gently so a single beat can't permanently skew it
-    if (baseline === null) baseline = bass;
-    baseline = baseline * 0.94 + bass * 0.06;
+    // spectral flux: sum of positive frame-to-frame energy jumps.
+    // reacts to CHANGE, not absolute level — works even when the
+    // track sits at a loud, flat plateau.
+    var flux = 0;
+    for (var i = 0; i < data.length; i++) {
+      var diff = data[i] - prevData[i];
+      if (diff > 0) flux += diff;
+    }
+    prevData.set(data);
+
+    fluxHistory.push(flux);
+    if (fluxHistory.length > 43) fluxHistory.shift(); // ~0.7s at 60fps
+    var avgFlux = fluxHistory.reduce(function (a, b) { return a + b; }, 0) / fluxHistory.length;
 
     var now = performance.now();
-    if (bass > baseline * 1.08 && bass - baseline > 6 && now - lastBeat > 180) {
+    if (flux > avgFlux * 1.5 && flux > 20 && now - lastBeat > 180) {
       beatVal = 1;
       lastBeat = now;
     } else {
@@ -394,7 +399,7 @@
     });
 
     raf = requestAnimationFrame(tick);
-}
+  }
 
   audio.addEventListener('play', function () {
     if (!ctx && !ensureContext()) return;
