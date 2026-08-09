@@ -366,15 +366,38 @@
   // build bars for each .bbv-waves container
   var waveSets = Array.prototype.map.call(waveContainers, function (container) {
     var count = parseInt(container.getAttribute('data-bars'), 10) || 24;
+    var isCircle = container.classList.contains('bbv-waves-circle');
+    var isVertical = container.classList.contains('bbv-waves-left') || container.classList.contains('bbv-waves-right');
     container.innerHTML = '';
     var bars = [];
+    var angles = [];
+    var radius = 0, innerR = 0, maxLen = 0;
+
+    if (isCircle) {
+      var rect = container.getBoundingClientRect();
+      radius = Math.min(rect.width, rect.height) / 2;
+      innerR = parseFloat(container.getAttribute('data-inner-radius')) || radius * 0.4;
+      maxLen = radius - innerR;
+    }
+
     for (var i = 0; i < count; i++) {
       var bar = document.createElement('div');
-      bar.className = 'bbv-wave-bar';
+      bar.className = isCircle ? 'bbv-wave-bar-circle' : 'bbv-wave-bar';
       container.appendChild(bar);
       bars.push(bar);
+      if (isCircle) {
+        var angle = (360 / count) * i;
+        angles.push(angle);
+        bar.style.height = maxLen + 'px';
+        bar.style.transformOrigin = '50% 100%';
+      }
     }
-    return { container: container, bars: bars, mirrored: container.classList.contains('bbv-waves-mirror') };
+
+    return {
+      container: container, bars: bars, angles: angles,
+      isCircle: isCircle, isVertical: isVertical,
+      innerR: innerR, maxLen: maxLen
+    };
   });
 
   function ensureContext() {
@@ -406,7 +429,16 @@
         }
         var val = n ? sum / n : 0;
         var pct = Math.max(4, (val / 255) * 100);
-        set.bars[i].style.height = pct + '%';
+
+        if (set.isCircle) {
+          var scale = Math.max(0.15, pct / 100);
+          set.bars[i].style.transform =
+            'translate(-50%, -100%) rotate(' + set.angles[i] + 'deg) translateY(-' + set.innerR + 'px) scaleY(' + scale + ')';
+        } else if (set.isVertical) {
+          set.bars[i].style.width = pct + '%';
+        } else {
+          set.bars[i].style.height = pct + '%';
+        }
       }
     });
   }
