@@ -1,11 +1,173 @@
+img.bbv-cover-disc.bbv-freecover {
+    display: block;
+    position: absolute;
+    width: auto;
+    height: auto;
+    max-width: 200px;
+    max-height: 200px;
+    border-radius: 0;
+    background: none;
+}
+
+/* Orientation modifiers for the linear waveform */
+.bbv-waves.bbv-waves-down { align-items: flex-start; }
+.bbv-waves.bbv-waves-down .bbv-wave-bar { border-radius: 0 0 1px 1px; }
+
+.bbv-waves.bbv-waves-left,
+.bbv-waves.bbv-waves-right {
+    flex-direction: column;
+}
+.bbv-waves.bbv-waves-left { align-items: flex-start; }
+.bbv-waves.bbv-waves-right { align-items: flex-end; }
+
+.bbv-waves.bbv-waves-left .bbv-wave-bar,
+.bbv-waves.bbv-waves-right .bbv-wave-bar {
+    flex: 1;
+    min-height: 1px;
+    width: 8%;
+    height: auto;
+}
+.bbv-waves.bbv-waves-left .bbv-wave-bar { border-radius: 0 1px 1px 0; }
+.bbv-waves.bbv-waves-right .bbv-wave-bar { border-radius: 1px 0 0 1px; }
+
+/* Circular variant — bars radiate from center, absolutely positioned */
+.bbv-waves.bbv-waves-circle {
+    display: block;
+}
+
+.bbv-wave-bar-circle {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 2px;
+    background: var(--bbv-accent);
+    border-radius: 1px 1px 0 0;
+}
+
+.bbv-waves {
+    position: absolute;
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    box-sizing: border-box;
+}
+
+.bbv-wave-bar {
+    flex: 1;
+    min-width: 1px;
+    background: var(--bbv-accent);
+    border-radius: 1px 1px 0 0;
+    height: 8%;
+    transition: height 0.05s linear;
+}
+
+/* Mirrored: bars grow from a center line both up and down */
+.bbv-waves.bbv-waves-mirror {
+    align-items: center;
+}
+.bbv-waves.bbv-waves-mirror .bbv-wave-bar {
+    border-radius: 1px;
+}
+
+/* Gradient bar fill instead of flat color */
+.bbv-waves.bbv-waves-gradient .bbv-wave-bar {
+    background: linear-gradient(180deg, var(--bbv-accent), color-mix(in srgb, var(--bbv-accent) 40%, black));
+}
+
+/* ── Cover disc: separate, freely-positioned spinning/static disc,
+      independent from the main image. Optional cover art via
+      inline background-image; falls back to the accent gradient
+      if none is given. ── */
+.bbv-cover-disc {
+    position: absolute;
+    border-radius: 100%;
+    background: var(--gradient1);
+    background-size: cover;
+    background-position: center;
+    z-index: 1;
+    box-sizing: border-box;
+}
+
+.bbv-cover-disc.bbv-spin {
+    animation: bbvLegacySpin 12s linear infinite;
+}
+
+.bbv-cover-disc.bbv-fx-border { border: 2px solid var(--color1); }
+.bbv-cover-disc.bbv-fx-glow { box-shadow: 0 0 25px rgba(192,57,43,0.5); }
+.bbv-cover-disc.bbv-fx-pulse { animation: bbvLegacyPulse 2.4s ease-in-out infinite; }
+.bbv-cover-disc.bbv-spin.bbv-fx-pulse { animation: bbvLegacySpin 12s linear infinite, bbvLegacyPulse 2.4s ease-in-out infinite; }
+
 /* ══════════════════ MUSIC PLAYER (BBV) — LEGACY VARIANT ══════════════════ */
+
+.bbv-player {
+    --bbv-accent: var(--color1, #c0392b);
+}
+
+/* Ring pulse — expanding ring outward from the element on each hit */
+.bbv-fx-beat-ring {
+    --bbv-beat: 0;
+    box-shadow: 0 0 0 calc(var(--bbv-beat) * 10px) color-mix(in srgb, var(--bbv-accent) calc(var(--bbv-beat) * 70%), transparent);
+}
+
+.bbv-fx-beat-ring::after {
+    content: '';
+    position: absolute;
+    inset: calc(-1px - var(--bbv-beat) * 14px);
+    border: 2px solid rgba(192,57,43, var(--bbv-beat));
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: var(--bbv-beat);
+}
+
+/* Flash — quick brightness/opacity punch over the whole element */
+.bbv-fx-beat-flash {
+    --bbv-beat: 0;
+    filter: brightness(calc(1 + var(--bbv-beat) * 0.5)) saturate(calc(1 + var(--bbv-beat) * 0.3));
+}
+.bbv-fx-beat-flash::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255, calc(var(--bbv-beat) * 0.35));
+    mix-blend-mode: overlay;
+    pointer-events: none;
+    border-radius: inherit;
+}
+
+/* Scale bump — subtle punch/zoom on each hit (combine freely with bbv-spin) */
+.bbv-fx-beat-scale {
+    --bbv-beat: 0;
+    transform: scale(calc(1 + var(--bbv-beat) * 0.06));
+}
+
+/* Chroma shift — hue/saturation kick, moodier than a plain white/red glow */
+.bbv-fx-beat-chroma {
+    --bbv-beat: 0;
+    filter: saturate(calc(1 + var(--bbv-beat) * 0.8)) brightness(calc(1 + var(--bbv-beat) * 0.25));
+}
+
+/* Combo — glow + ring together, most "alive" look */
+.bbv-fx-beat-combo {
+    --bbv-beat: 0;
+    box-shadow:
+        0 0 calc(8px + var(--bbv-beat) * 24px) color-mix(in srgb, var(--bbv-accent) calc(30% + var(--bbv-beat) * 60%), transparent),
+        0 0 0 calc(var(--bbv-beat) * 6px) color-mix(in srgb, var(--bbv-accent) calc(var(--bbv-beat) * 50%), transparent);
+}
+.bbv-fx-beat-combo::after {
+    content: '';
+    position: absolute;
+    inset: calc(-1px - var(--bbv-beat) * 10px);
+    border: 1px solid rgba(192,57,43, calc(var(--bbv-beat) * 0.7));
+    border-radius: inherit;
+    pointer-events: none;
+}
 
 .bbv-legacy-bar.bbv-vol-open .bbv-vol-panel { display: block; }
 .bbv-free-player.bbv-vol-open .bbv-vol-panel { display: block; }
 
 .bbv-fx-beat {
     --bbv-beat: 0;
-    box-shadow: 0 0 calc(8px + var(--bbv-beat) * 24px) rgba(192,57,43, calc(0.3 + var(--bbv-beat) * 0.6));
+    box-shadow: 0 0 calc(8px + var(--bbv-beat) * 24px) color-mix(in srgb, var(--bbv-accent) calc(30% + var(--bbv-beat) * 60%), transparent);
 }
 
 .bbv-player.bbv-legacy {
@@ -407,7 +569,7 @@
     display: block;
 }
 
-/* ── Free cover: ignore circle/size constraints ── */
+/* ── Free cover: works on compact, card, and hero — any variant using .bbv-disc ── */
 .bbv-player.bbv-freecover .bbv-disc.bbv-has-cover {
     flex: none;
     width: auto;
