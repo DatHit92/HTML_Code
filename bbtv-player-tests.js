@@ -344,21 +344,38 @@
 }
 
   function attachBeatSync(root, audio) {
-  var targets = root.querySelectorAll('.bbv-fx-beat, .bbv-fx-beat-ring, .bbv-fx-beat-flash, .bbv-fx-beat-scale, .bbv-fx-beat-chroma, .bbv-fx-beat-combo');
-    var sensLevel = root.getAttribute('data-beat-sens') || 'mid';
-    var sensMap = {
-      low:  { mult: 1.9, floor: 50 },
-      mid:  { mult: 1.5, floor: 35 },
-      high: { mult: 1.25, floor: 15 }
-    };
+  var glowTargets = root.querySelectorAll('.bbv-fx-beat, .bbv-fx-beat-ring, .bbv-fx-beat-flash, .bbv-fx-beat-scale, .bbv-fx-beat-chroma, .bbv-fx-beat-combo');
+  var waveContainers = root.querySelectorAll('.bbv-waves');
+  if (!glowTargets.length && !waveContainers.length) return;
+
+  var sensLevel = root.getAttribute('data-beat-sens') || 'mid';
+  var sensMap = {
+    low:  { mult: 1.9, floor: 35 },
+    mid:  { mult: 1.5, floor: 20 },
+    high: { mult: 1.25, floor: 10 }
+  };
   var sens = sensMap[sensLevel] || sensMap.mid;
-  if (!targets.length) return;
+  var intensityMult = parseFloat(root.getAttribute('data-beat-intensity')) || 1;
 
   var ctx, analyser, data, prevData;
   var raf = null;
   var beatVal = 0;
   var lastBeat = 0;
   var fluxHistory = [];
+
+  // build bars for each .bbv-waves container
+  var waveSets = Array.prototype.map.call(waveContainers, function (container) {
+    var count = parseInt(container.getAttribute('data-bars'), 10) || 24;
+    container.innerHTML = '';
+    var bars = [];
+    for (var i = 0; i < count; i++) {
+      var bar = document.createElement('div');
+      bar.className = 'bbv-wave-bar';
+      container.appendChild(bar);
+      bars.push(bar);
+    }
+    return { container: container, bars: bars, mirrored: container.classList.contains('bbv-waves-mirror') };
+  });
 
   function ensureContext() {
     if (ctx) return true;
@@ -378,34 +395,56 @@
     }
   }
 
+  function updateWaves() {
+    waveSets.forEach(function (set) {
+      var barCount = set.bars.length;
+      var chunk = data.length / barCount;
+      for (var i = 0; i < barCount; i++) {
+        var sum = 0, n = 0;
+        for (var j = Math.floor(i * chunk); j < Math.floor((i + 1) * chunk); j++) {
+          sum += data[j]; n++;
+        }
+        var val = n ? sum / n : 0;
+        var pct = Math.max(4, (val / 255) * 100);
+        set.bars[i].style.height = pct + '%';
+      }
+    });
+  }
+
   function tick() {
     analyser.getByteFrequencyData(data);
 
-    // spectral flux: sum of positive frame-to-frame energy jumps.
-    // reacts to CHANGE, not absolute level — works even when the
-    // track sits at a loud, flat plateau.
-    var flux = 0;
-    for (var i = 0; i < data.length; i++) {
-      var diff = data[i] - prevData[i];
-      if (diff > 0) flux += diff;
+    if (glowTargets.length) {
+      var flux = 0;
+      for (var i = 0; i < data.length; i++) {
+        var diff = data[i] - prevData[i];
+        if (diff > 0) flux += diff;
+      }
+
+      fluxHistory.push(flux);
+      if (fluxHistory.length > 43) fluxHistory.shift();
+      var avgFlux = fluxHistory.reduce(function (a, b) { return a + b; }, 0) / fluxHistory.length;
+
+      var now = performance.now();
+      var threshold = avgFlux * sens.mult;
+
+      if (flux > threshold && flux > sens.floor && now - lastBeat > 180) {
+        var range = avgFlux * 1.5 || 1;
+        var intensity = (flux - threshold) / range;
+        beatVal = Math.min(1, Math.max(0.35, intensity * intensityMult));
+        lastBeat = now;
+      } else {
+        beatVal *= 0.88;
+      }
+
+      glowTargets.forEach(function (t) {
+        t.style.setProperty('--bbv-beat', beatVal.toFixed(3));
+      });
     }
+
     prevData.set(data);
 
-    fluxHistory.push(flux);
-    if (fluxHistory.length > 43) fluxHistory.shift(); // ~0.7s at 60fps
-    var avgFlux = fluxHistory.reduce(function (a, b) { return a + b; }, 0) / fluxHistory.length;
-
-    var now = performance.now();
-    if (flux > avgFlux * sens.mult && flux > sens.floor && now - lastBeat > 180) {
-      beatVal = 1;
-      lastBeat = now;
-    } else {
-      beatVal *= 0.88;
-    }
-
-    targets.forEach(function (t) {
-      t.style.setProperty('--bbv-beat', beatVal.toFixed(3));
-    });
+    if (waveSets.length) updateWaves();
 
     raf = requestAnimationFrame(tick);
   }
@@ -418,17 +457,11 @@
 
   audio.addEventListener('pause', function () {
     if (raf) { cancelAnimationFrame(raf); raf = null; }
-    targets.forEach(function (t) { t.style.setProperty('--bbv-beat', 0); });
+    glowTargets.forEach(function (t) { t.style.setProperty('--bbv-beat', 0); });
+    waveSets.forEach(function (set) {
+      set.bars.forEach(function (b) { b.style.height = '8%'; });
+    });
   });
 }
-
-  document.addEventListener('DOMContentLoaded', function () {
-  document.querySelectorAll('.bbv-player').forEach(function (el) {
-    if (el.classList.contains('bbv-sig')) initSig(el);
-    else if (el.classList.contains('bbv-free')) initFree(el);
-    else if (el.classList.contains('bbv-legacy')) initLegacy(el);
-    else initStandard(el);
-  });
-});
 
 })();
