@@ -343,6 +343,13 @@
 
   function attachBeatSync(root, audio) {
   var targets = root.querySelectorAll('.bbv-fx-beat');
+    var sensLevel = root.getAttribute('data-beat-sens') || 'mid';
+    var sensMap = {
+      low:  { mult: 1.9, floor: 35 },
+      mid:  { mult: 1.5, floor: 20 },
+      high: { mult: 1.25, floor: 10 }
+    };
+  var sens = sensMap[sensLevel] || sensMap.mid;
   if (!targets.length) return;
 
   var ctx, analyser, data, prevData;
@@ -387,7 +394,7 @@
     var avgFlux = fluxHistory.reduce(function (a, b) { return a + b; }, 0) / fluxHistory.length;
 
     var now = performance.now();
-    if (flux > avgFlux * 1.5 && flux > 20 && now - lastBeat > 180) {
+    if (flux > avgFlux * sens.mult && flux > sens.floor && now - lastBeat > 180) {
       beatVal = 1;
       lastBeat = now;
     } else {
