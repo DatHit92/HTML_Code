@@ -464,4 +464,13 @@
   });
 }
 
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.bbv-player').forEach(function (el) {
+      if (el.classList.contains('bbv-sig')) initSig(el);
+      else if (el.classList.contains('bbv-free')) initFree(el);
+      else if (el.classList.contains('bbv-legacy')) initLegacy(el);
+      else initStandard(el);
+    });
+  });
+
 })();
