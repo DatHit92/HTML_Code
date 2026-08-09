@@ -181,6 +181,7 @@
   var h = el.getAttribute('data-height');
   var isFree = el.classList.contains('bbv-img-free');
   var wantsBeat = el.hasAttribute('data-beat');
+  var beatVariant = el.getAttribute('data-beat') || 'bbv-fx-beat';
 
   el.innerHTML = '';
   el.setAttribute('data-count', tracks.length);
@@ -256,6 +257,7 @@
   if (!tracks.length) return;
 
   var wantsBeat = el.hasAttribute('data-beat');
+  var beatVariant = el.getAttribute('data-beat') || 'bbv-fx-beat';
 
   el.innerHTML = '';
   el.setAttribute('data-count', tracks.length);
@@ -342,7 +344,7 @@
 }
 
   function attachBeatSync(root, audio) {
-  var targets = root.querySelectorAll('.bbv-fx-beat');
+  var targets = root.querySelectorAll('.bbv-fx-beat, .bbv-fx-beat-ring, .bbv-fx-beat-flash, .bbv-fx-beat-scale, .bbv-fx-beat-chroma, .bbv-fx-beat-combo');
     var sensLevel = root.getAttribute('data-beat-sens') || 'mid';
     var sensMap = {
       low:  { mult: 1.9, floor: 35 },
