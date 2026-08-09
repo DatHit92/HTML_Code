@@ -347,9 +347,9 @@
   var targets = root.querySelectorAll('.bbv-fx-beat, .bbv-fx-beat-ring, .bbv-fx-beat-flash, .bbv-fx-beat-scale, .bbv-fx-beat-chroma, .bbv-fx-beat-combo');
     var sensLevel = root.getAttribute('data-beat-sens') || 'mid';
     var sensMap = {
-      low:  { mult: 1.9, floor: 35 },
-      mid:  { mult: 1.5, floor: 20 },
-      high: { mult: 1.25, floor: 10 }
+      low:  { mult: 1.9, floor: 50 },
+      mid:  { mult: 1.5, floor: 35 },
+      high: { mult: 1.25, floor: 15 }
     };
   var sens = sensMap[sensLevel] || sensMap.mid;
   if (!targets.length) return;
