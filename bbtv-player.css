@@ -185,8 +185,8 @@ img.bbv-cover-disc.bbv-freecover {
     z-index: 0;
 }
 
-.bbv-legacy-img.bbv-fx-border { border: 2px solid var(--color1); box-sizing: border-box; }
-.bbv-legacy-img.bbv-fx-glow { box-shadow: 0 0 25px rgba(192,57,43,0.5); }
+.bbv-legacy-img.bbv-fx-border { border: 2px solid var(--bbv-accent, var(--color1)); box-sizing: border-box; }
+.bbv-legacy-img.bbv-fx-glow { box-shadow: 0 0 25px color-mix(in srgb, var(--bbv-accent, var(--color1)) 50%, transparent); }
 .bbv-legacy-img.bbv-fx-pulse { animation: bbvLegacyPulse 2.4s ease-in-out infinite; }
 .bbv-legacy-img.bbv-spin { animation: bbvLegacySpin 12s linear infinite; }
 .bbv-legacy-img.bbv-spin.bbv-fx-pulse { animation: bbvLegacySpin 12s linear infinite, bbvLegacyPulse 2.4s ease-in-out infinite; }
@@ -205,7 +205,7 @@ img.bbv-cover-disc.bbv-freecover {
     position: absolute;
     z-index: 1;
     text-transform: uppercase;
-    color: #fff;
+    color: var(--bbv-text-color, #fff);
     text-shadow: 0 0 10px rgba(0,0,0,0.85);
     white-space: nowrap;
     pointer-events: none;
