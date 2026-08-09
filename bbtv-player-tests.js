@@ -349,7 +349,7 @@
   var raf = null;
   var beatVal = 0;
   var lastBeat = 0;
-  var history = [];
+  var baseline = null;
 
   function ensureContext() {
     if (ctx) return true;
