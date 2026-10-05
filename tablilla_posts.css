@@ -1,0 +1,259 @@
+══════════════════════════════════════════════════════════════
+ 1) HEADER (.tpl) — pegar justo debajo del <link> de Noto Serif JP
+══════════════════════════════════════════════════════════════
+
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Shippori+Mincho:wght@400;600;800&family=Special+Elite&family=Caveat:wght@400;700&display=swap" rel="stylesheet">
+
+
+══════════════════════════════════════════════════════════════
+ 2) CSS — pegar al final del panel CSS
+══════════════════════════════════════════════════════════════
+
+/* ══════════ TABLILLA DE POST (.bbv) ══════════ */
+.bbv, .bbv * { box-sizing: border-box; }
+
+.bbv {
+  --_c: var(--c, var(--grupo-color, var(--color1)));
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  max-width: 650px;
+  margin: 20px auto;
+  background:
+    linear-gradient(rgba(8,8,8,var(--velo,.9)), rgba(8,8,8,var(--velo,.9))),
+    var(--fondo, none) center/cover no-repeat,
+    var(--fondo3);
+  border: var(--borde2);
+  border-top: 2px solid var(--_c);
+  box-shadow: 0 4px 40px rgba(0,0,0,.6);
+  font-family: var(--fuente, 'Noto Serif JP', serif);
+  color: var(--textobase);
+  text-align: left;
+}
+.bbv::before {
+  content: ''; position: absolute; left: 0; top: 0;
+  width: 3px; height: 100%; background: var(--_c);
+  opacity: .8; z-index: 3; pointer-events: none;
+}
+.bbv br { display: none; }
+.bbv texto br { display: block; }
+
+/* ── Anchos ── */
+.bbv.ancho-s { max-width: 450px; }
+.bbv.ancho-m { max-width: 550px; }
+.bbv.ancho-l { max-width: 650px; }
+.bbv.ancho-full { max-width: none; }
+
+/* ── Fuentes ── */
+.bbv.f-cinzel   { --fuente: 'Cinzel', serif; }
+.bbv.f-garamond { --fuente: 'Cormorant Garamond', serif; }
+.bbv.f-playfair { --fuente: 'Playfair Display', serif; }
+.bbv.f-mincho   { --fuente: 'Shippori Mincho', serif; }
+.bbv.f-maquina  { --fuente: 'Special Elite', monospace; }
+.bbv.f-mano     { --fuente: 'Caveat', cursive; }
+
+/* ── Colores predefinidos (alternativa a --c) ── */
+.bbv.c-shinigami   { --c: #c0392b; }
+.bbv.c-quincy      { --c: #63ccf2; }
+.bbv.c-hollow      { --c: #b4c8e6; }
+.bbv.c-fullbringer { --c: #28a050; }
+.bbv.c-dorado      { --c: #c0831a; }
+.bbv.c-violeta     { --c: #9632c8; }
+.bbv.c-rosa        { --c: #c01a5e; }
+
+/* ── Extras de caja ── */
+.bbv.marco { outline: 1px solid color-mix(in srgb, var(--_c) 45%, transparent); outline-offset: -8px; }
+.bbv.glow  { box-shadow: 0 0 35px color-mix(in srgb, var(--_c) 35%, transparent), 0 4px 40px rgba(0,0,0,.6); }
+
+/* ── Título y subtítulo ── */
+.bbv titulo {
+  display: block; text-align: center;
+  padding: 30px 32px 22px;
+  font-size: var(--tam-t, 26px); font-weight: 900; font-style: italic;
+  letter-spacing: 1px; line-height: 1.2;
+  font-family: var(--fuente-t, var(--fuente, 'Noto Serif JP', serif));
+  color: var(--_c);
+  text-shadow: 0 0 30px color-mix(in srgb, var(--_c) 45%, transparent);
+}
+.bbv titulo:has(+ sub) { padding-bottom: 8px; }
+.bbv sub {
+  display: block; vertical-align: baseline; position: static;
+  text-align: center; padding: 0 32px 22px;
+  font-size: 10px; line-height: 1.5; letter-spacing: 4px;
+  text-transform: uppercase; font-weight: 600;
+  color: rgba(255,255,255,.5);
+}
+
+/* ── Texto ── */
+.bbv texto {
+  display: block; padding: 26px 34px;
+  font-size: var(--tam, 13px); line-height: 1.85;
+  text-align: left; color: rgba(255,255,255,.8);
+}
+.bbv.just texto { text-align: justify; }
+.bbv titulo ~ texto, .bbv sub ~ texto {
+  border-top: 1px solid color-mix(in srgb, var(--_c) 30%, transparent);
+}
+.bbv strong { color: var(--_c); }
+.bbv u { text-decoration: none; border-bottom: 1px solid var(--_c); }
+.bbv a { color: var(--_c); }
+
+/* ── Pie ── */
+.bbv pie {
+  display: block; clear: both; text-align: center;
+  padding: 13px 24px; font-size: 10px; letter-spacing: 2px;
+  text-transform: uppercase; font-weight: 600;
+  color: rgba(255,255,255,.55); background: rgba(0,0,0,.4);
+  border-top: 1px solid color-mix(in srgb, var(--_c) 30%, transparent);
+}
+.bbv pie::before { content: '▴ '; color: var(--_c); }
+
+/* ── Separadores ── */
+.bbv sep {
+  display: flex; align-items: center; justify-content: center;
+  gap: 14px; margin: 18px 34px; clear: both;
+  color: var(--_c); font-size: 14px; line-height: 1;
+}
+.bbv sep:empty { gap: 0; }
+.bbv sep::before, .bbv sep::after {
+  content: ''; flex: 1; height: 1px;
+}
+.bbv sep::before { background: linear-gradient(90deg, transparent, var(--_c)); }
+.bbv sep::after  { background: linear-gradient(90deg, var(--_c), transparent); }
+.bbv sep.rombo {
+  display: block; position: relative; height: 14px; margin: 18px 34px;
+  background: linear-gradient(90deg, transparent, var(--_c) 44%, transparent 44%, transparent 56%, var(--_c) 56%, transparent) center/100% 1px no-repeat;
+}
+.bbv sep.rombo::before {
+  content: '◆'; position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%,-50%); width: auto; height: auto;
+  flex: none; background: none; font-size: 10px; color: var(--_c);
+}
+.bbv sep.rombo::after { display: none; }
+
+/* ── Imagen decorativa ── */
+.bbv imagen {
+  display: block; position: relative;
+  height: var(--alto, 200px);
+  background-size: cover; background-position: var(--pos, center); background-repeat: no-repeat;
+}
+.bbv imagen::after {
+  content: ''; position: absolute; inset: 0; border-radius: inherit;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--_c) 18%, transparent), transparent 60%);
+}
+.bbv imagen.arriba { border-bottom: 2px solid var(--_c); }
+.bbv imagen.abajo  { border-top: 2px solid var(--_c); }
+.bbv imagen.izq {
+  float: left; width: var(--ancho-img, 36%); height: var(--alto, 280px);
+  margin: 0 24px 14px 0; border-right: 2px solid var(--_c);
+}
+.bbv imagen.der {
+  float: right; width: var(--ancho-img, 36%); height: var(--alto, 280px);
+  margin: 0 0 14px 24px; border-left: 2px solid var(--_c);
+}
+
+/* Formas */
+.bbv imagen.diagonal {
+  border: 0;
+  clip-path: polygon(0 0,100% 0,100% 82%,0 100%);
+  shape-outside: polygon(0 0,100% 0,100% 82%,0 100%);
+}
+.bbv imagen.diagonal.abajo {
+  clip-path: polygon(0 18%,100% 0,100% 100%,0 100%);
+  shape-outside: polygon(0 18%,100% 0,100% 100%,0 100%);
+}
+.bbv imagen.diagonal.izq {
+  clip-path: polygon(0 0,100% 0,82% 100%,0 100%);
+  shape-outside: polygon(0 0,100% 0,82% 100%,0 100%);
+  shape-margin: 14px;
+}
+.bbv imagen.diagonal.der {
+  clip-path: polygon(0 0,100% 0,100% 100%,18% 100%);
+  shape-outside: polygon(0 0,100% 0,100% 100%,18% 100%);
+  shape-margin: 14px;
+}
+.bbv imagen.circulo {
+  width: var(--alto, 220px); height: var(--alto, 220px);
+  border: 2px solid var(--_c); border-radius: 50%; overflow: hidden;
+  shape-outside: circle(50%); shape-margin: 14px;
+}
+.bbv imagen.hexagono {
+  width: calc(var(--alto, 240px) * 1.15); height: var(--alto, 240px);
+  border: 0;
+  clip-path: polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%);
+  shape-outside: polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%);
+  shape-margin: 14px;
+}
+.bbv imagen.arco {
+  width: calc(var(--alto, 260px) * .8); height: var(--alto, 260px);
+  border: 2px solid var(--_c); border-radius: 999px 999px 0 0; overflow: hidden;
+  shape-outside: inset(0 round 999px 999px 0 0); shape-margin: 14px;
+}
+.bbv imagen:is(.circulo,.hexagono,.arco):not(.izq):not(.der) { margin: 22px auto; }
+.bbv imagen:is(.circulo,.hexagono,.arco).izq { margin: 22px 24px 14px 28px; }
+.bbv imagen:is(.circulo,.hexagono,.arco).der { margin: 22px 28px 14px 24px; }
+
+
+══════════════════════════════════════════════════════════════
+ 3) GUÍA PARA USUARIOS (publicar como tema fijo)
+══════════════════════════════════════════════════════════════
+
+CÓDIGO MÍNIMO (solo <texto> es obligatorio; lo demás es opcional):
+
+<div class="bbv">
+<titulo>Título</titulo>
+<sub>Subtítulo</sub>
+<texto>Aquí va tu post...</texto>
+<pie>Lugar · Hora · Ambiente</pie>
+</div>
+
+Usa [b] y [u] normalmente dentro de <texto>: salen con el color de la tablilla.
+
+── CLASES (se escriben en el div: class="bbv f-cinzel ancho-m marco") ──
+Fuente:  f-cinzel · f-garamond · f-playfair · f-mincho · f-maquina · f-mano
+Ancho:   ancho-s (450) · ancho-m (550) · ancho-l (650, por defecto) · ancho-full
+Color:   c-shinigami · c-quincy · c-hollow · c-fullbringer · c-dorado · c-violeta · c-rosa
+Extras:  marco (borde interior) · glow (resplandor) · just (texto justificado)
+
+Si no pones color, usa el color de tu grupo.
+
+── AJUSTES FINOS (en style="", todos opcionales) ──
+<div class="bbv" style="--c:#8e44ad; --fondo:url(IMAGEN); --velo:.8; --fuente:Georgia; --tam:14px">
+
+--c       color de acento (cualquier color: #8e44ad, crimson…)
+--fondo   imagen de fondo de toda la caja: url(https://...)
+--velo    oscuridad sobre el fondo: 0 (nada) a 1 (negro). Por defecto .9
+--fuente  fuente libre (cualquiera instalada en tu equipo, ej. Georgia)
+--fuente-t fuente solo del título
+--tam     tamaño del texto (13px por defecto)
+--tam-t   tamaño del título (26px por defecto)
+
+── IMAGEN DECORATIVA ──
+<imagen class="der diagonal" style="background-image:url(https://...)"></imagen>
+
+Posición:  arriba (por defecto) · abajo · izq · der
+           izq y der hacen que el texto rodee la imagen.
+Forma:     diagonal · circulo · hexagono · arco
+Ajustes:   --alto (altura, ej. 300px) · --ancho-img (solo izq/der, ej. 40%) · --pos (encuadre, ej. top)
+
+DÓNDE PONERLA: la imagen aparece en el lugar del código donde la escribas.
+ - Arriba del todo: antes de <titulo>.
+ - Al lado del texto (izq/der): justo antes de <texto>.
+ - Abajo: después de <texto> y antes de <pie>.
+
+── SEPARADORES (dentro de <texto> o entre bloques) ──
+<sep></sep>            línea con degradado
+<sep class="rombo"></sep>   línea con rombo central
+<sep>✦</sep>           símbolo o kanji libre en el centro (魂 · ✧ · ❖ · ※)
+
+── EJEMPLO COMPLETO ──
+
+<div class="bbv f-garamond marco" style="--fondo:url(https://...); --velo:.85">
+<imagen class="izq diagonal" style="background-image:url(https://...)"></imagen>
+<titulo>El Abismo</titulo>
+<sub>Seireitei · Noche cerrada</sub>
+<texto>Primer párrafo del post...
+<sep class="rombo"></sep>
+Segundo párrafo con [b]énfasis[/b].</texto>
+<pie>Día 3 · 23:40 · Lluvia</pie>
+</div>
