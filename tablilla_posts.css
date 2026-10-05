@@ -1,82 +1,87 @@
 ══════════════════════════════════════════════════════════════
  1) HEADER (.tpl) — pegar justo debajo del <link> de Noto Serif JP
+    (si ya lo pegaste en la versión anterior, no hace falta repetirlo)
 ══════════════════════════════════════════════════════════════
 
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Shippori+Mincho:wght@400;600;800&family=Special+Elite&family=Caveat:wght@400;700&display=swap" rel="stylesheet">
 
 
 ══════════════════════════════════════════════════════════════
- 2) CSS — pegar al final del panel CSS
+ 2) CSS — pegar al final del panel CSS (o en bbv.css externo)
+    Sustituye por completo el bloque anterior ".bbv"
 ══════════════════════════════════════════════════════════════
 
-/* ══════════ TABLILLA DE POST (.bbv) ══════════ */
-.bbv, .bbv * { box-sizing: border-box; }
+/* ══════════ TABLILLA DE POST (.bbv-rolpost) ══════════ */
+.bbv-rolpost, .bbv-rolpost * { box-sizing: border-box; }
 
-.bbv {
-  --_c: var(--c, var(--grupo-color, var(--color1)));
+.bbv-rolpost {
+  --_c: var(--color, var(--grupo-color, var(--color1)));
   position: relative;
+  isolation: isolate;
   overflow: hidden;
   width: 100%;
   max-width: 650px;
   margin: 20px auto;
   background:
-    linear-gradient(rgba(8,8,8,var(--velo,.9)), rgba(8,8,8,var(--velo,.9))),
-    var(--fondo, none) center/cover no-repeat,
+    linear-gradient(rgba(8,8,8,var(--overlay,.9)), rgba(8,8,8,var(--overlay,.9))),
+    var(--bg, none) center/cover no-repeat,
     var(--fondo3);
   border: var(--borde2);
   border-top: 2px solid var(--_c);
   box-shadow: 0 4px 40px rgba(0,0,0,.6);
-  font-family: var(--fuente, 'Noto Serif JP', serif);
+  font-family: var(--font, 'Noto Serif JP', serif);
   color: var(--textobase);
   text-align: left;
 }
-.bbv::before {
+.bbv-rolpost::before {
   content: ''; position: absolute; left: 0; top: 0;
   width: 3px; height: 100%; background: var(--_c);
   opacity: .8; z-index: 3; pointer-events: none;
 }
-.bbv br { display: none; }
-.bbv texto br { display: block; }
+.bbv-rolpost br { display: none; }
+.bbv-rolpost texto br { display: block; }
+.bbv-rolpost texto imagen + br,
+.bbv-rolpost texto sep + br { display: none; }
 
 /* ── Anchos ── */
-.bbv.ancho-s { max-width: 450px; }
-.bbv.ancho-m { max-width: 550px; }
-.bbv.ancho-l { max-width: 650px; }
-.bbv.ancho-full { max-width: none; }
+.bbv-rolpost.ancho-s { max-width: 450px; }
+.bbv-rolpost.ancho-m { max-width: 550px; }
+.bbv-rolpost.ancho-l { max-width: 650px; }
+.bbv-rolpost.ancho-full { max-width: none; }
 
 /* ── Fuentes ── */
-.bbv.f-cinzel   { --fuente: 'Cinzel', serif; }
-.bbv.f-garamond { --fuente: 'Cormorant Garamond', serif; }
-.bbv.f-playfair { --fuente: 'Playfair Display', serif; }
-.bbv.f-mincho   { --fuente: 'Shippori Mincho', serif; }
-.bbv.f-maquina  { --fuente: 'Special Elite', monospace; }
-.bbv.f-mano     { --fuente: 'Caveat', cursive; }
+.bbv-rolpost.f-cinzel   { --font: 'Cinzel', serif; }
+.bbv-rolpost.f-garamond { --font: 'Cormorant Garamond', serif; }
+.bbv-rolpost.f-playfair { --font: 'Playfair Display', serif; }
+.bbv-rolpost.f-mincho   { --font: 'Shippori Mincho', serif; }
+.bbv-rolpost.f-maquina  { --font: 'Special Elite', monospace; }
+.bbv-rolpost.f-mano     { --font: 'Caveat', cursive; }
 
-/* ── Colores predefinidos (alternativa a --c) ── */
-.bbv.c-shinigami   { --c: #c0392b; }
-.bbv.c-quincy      { --c: #63ccf2; }
-.bbv.c-hollow      { --c: #b4c8e6; }
-.bbv.c-fullbringer { --c: #28a050; }
-.bbv.c-dorado      { --c: #c0831a; }
-.bbv.c-violeta     { --c: #9632c8; }
-.bbv.c-rosa        { --c: #c01a5e; }
+/* ── Colores predefinidos (alternativa a --color) ── */
+.bbv-rolpost.c-shinigami   { --color: #c0392b; }
+.bbv-rolpost.c-quincy      { --color: #63ccf2; }
+.bbv-rolpost.c-hollow      { --color: #b4c8e6; }
+.bbv-rolpost.c-fullbringer { --color: #28a050; }
+.bbv-rolpost.c-dorado      { --color: #c0831a; }
+.bbv-rolpost.c-violeta     { --color: #9632c8; }
+.bbv-rolpost.c-rosa        { --color: #c01a5e; }
 
 /* ── Extras de caja ── */
-.bbv.marco { outline: 1px solid color-mix(in srgb, var(--_c) 45%, transparent); outline-offset: -8px; }
-.bbv.glow  { box-shadow: 0 0 35px color-mix(in srgb, var(--_c) 35%, transparent), 0 4px 40px rgba(0,0,0,.6); }
+.bbv-rolpost.marco { outline: 1px solid color-mix(in srgb, var(--_c) 45%, transparent); outline-offset: -8px; }
+.bbv-rolpost.glow  { box-shadow: 0 0 35px color-mix(in srgb, var(--_c) 35%, transparent), 0 4px 40px rgba(0,0,0,.6); }
 
 /* ── Título y subtítulo ── */
-.bbv titulo {
+.bbv-rolpost titulo {
   display: block; text-align: center;
   padding: 30px 32px 22px;
-  font-size: var(--tam-t, 26px); font-weight: 900; font-style: italic;
+  font-size: var(--t-size, 26px); font-weight: 900; font-style: italic;
   letter-spacing: 1px; line-height: 1.2;
-  font-family: var(--fuente-t, var(--fuente, 'Noto Serif JP', serif));
+  font-family: var(--t-font, var(--font, 'Noto Serif JP', serif));
   color: var(--_c);
   text-shadow: 0 0 30px color-mix(in srgb, var(--_c) 45%, transparent);
 }
-.bbv titulo:has(+ sub) { padding-bottom: 8px; }
-.bbv sub {
+.bbv-rolpost titulo:has(+ sub) { padding-bottom: 8px; }
+.bbv-rolpost sub {
   display: block; vertical-align: baseline; position: static;
   text-align: center; padding: 0 32px 22px;
   font-size: 10px; line-height: 1.5; letter-spacing: 4px;
@@ -85,113 +90,161 @@
 }
 
 /* ── Texto ── */
-.bbv texto {
+.bbv-rolpost texto {
   display: block; padding: 26px 34px;
-  font-size: var(--tam, 13px); line-height: 1.85;
+  font-size: var(--size, 13px); line-height: 1.85;
   text-align: left; color: rgba(255,255,255,.8);
 }
-.bbv.just texto { text-align: justify; }
-.bbv titulo ~ texto, .bbv sub ~ texto {
+.bbv-rolpost.just texto { text-align: justify; }
+.bbv-rolpost titulo ~ texto, .bbv-rolpost sub ~ texto {
   border-top: 1px solid color-mix(in srgb, var(--_c) 30%, transparent);
 }
-.bbv strong { color: var(--_c); }
-.bbv u { text-decoration: none; border-bottom: 1px solid var(--_c); }
-.bbv a { color: var(--_c); }
+.bbv-rolpost strong { color: var(--_c); }
+.bbv-rolpost u { text-decoration: none; border-bottom: 1px solid var(--_c); }
+.bbv-rolpost a { color: var(--_c); }
 
 /* ── Pie ── */
-.bbv pie {
+.bbv-rolpost pie {
   display: block; clear: both; text-align: center;
   padding: 13px 24px; font-size: 10px; letter-spacing: 2px;
   text-transform: uppercase; font-weight: 600;
   color: rgba(255,255,255,.55); background: rgba(0,0,0,.4);
   border-top: 1px solid color-mix(in srgb, var(--_c) 30%, transparent);
 }
-.bbv pie::before { content: '▴ '; color: var(--_c); }
+.bbv-rolpost pie::before { content: '▴ '; color: var(--_c); }
 
 /* ── Separadores ── */
-.bbv sep {
+.bbv-rolpost sep {
   display: flex; align-items: center; justify-content: center;
   gap: 14px; margin: 18px 34px; clear: both;
   color: var(--_c); font-size: 14px; line-height: 1;
 }
-.bbv sep:empty { gap: 0; }
-.bbv sep::before, .bbv sep::after {
+.bbv-rolpost sep:empty { gap: 0; }
+.bbv-rolpost sep::before, .bbv-rolpost sep::after {
   content: ''; flex: 1; height: 1px;
 }
-.bbv sep::before { background: linear-gradient(90deg, transparent, var(--_c)); }
-.bbv sep::after  { background: linear-gradient(90deg, var(--_c), transparent); }
-.bbv sep.rombo {
+.bbv-rolpost sep::before { background: linear-gradient(90deg, transparent, var(--_c)); }
+.bbv-rolpost sep::after  { background: linear-gradient(90deg, var(--_c), transparent); }
+.bbv-rolpost sep.rombo {
   display: block; position: relative; height: 14px; margin: 18px 34px;
   background: linear-gradient(90deg, transparent, var(--_c) 44%, transparent 44%, transparent 56%, var(--_c) 56%, transparent) center/100% 1px no-repeat;
 }
-.bbv sep.rombo::before {
+.bbv-rolpost sep.rombo::before {
   content: '◆'; position: absolute; left: 50%; top: 50%;
   transform: translate(-50%,-50%); width: auto; height: auto;
   flex: none; background: none; font-size: 10px; color: var(--_c);
 }
-.bbv sep.rombo::after { display: none; }
+.bbv-rolpost sep.rombo::after { display: none; }
 
-/* ── Imagen decorativa ── */
-.bbv imagen {
+/* ══════════ IMAGEN DECORATIVA ══════════ */
+.bbv-rolpost imagen {
   display: block; position: relative;
-  height: var(--alto, 200px);
+  height: var(--height, 200px);
   background-size: cover; background-position: var(--pos, center); background-repeat: no-repeat;
 }
-.bbv imagen::after {
+.bbv-rolpost imagen::after {
   content: ''; position: absolute; inset: 0; border-radius: inherit;
   background: linear-gradient(135deg, color-mix(in srgb, var(--_c) 18%, transparent), transparent 60%);
 }
-.bbv imagen.arriba { border-bottom: 2px solid var(--_c); }
-.bbv imagen.abajo  { border-top: 2px solid var(--_c); }
-.bbv imagen.izq {
-  float: left; width: var(--ancho-img, 36%); height: var(--alto, 280px);
+.bbv-rolpost imagen.arriba { border-bottom: 2px solid var(--_c); }
+.bbv-rolpost imagen.abajo  { border-top: 2px solid var(--_c); }
+.bbv-rolpost imagen.izq {
+  float: left; width: var(--img-width, 36%); height: var(--height, 280px);
   margin: 0 24px 14px 0; border-right: 2px solid var(--_c);
 }
-.bbv imagen.der {
-  float: right; width: var(--ancho-img, 36%); height: var(--alto, 280px);
+.bbv-rolpost imagen.der {
+  float: right; width: var(--img-width, 36%); height: var(--height, 280px);
   margin: 0 0 14px 24px; border-left: 2px solid var(--_c);
 }
 
-/* Formas */
-.bbv imagen.diagonal {
+/* ── Formas ── */
+.bbv-rolpost imagen.diagonal {
   border: 0;
   clip-path: polygon(0 0,100% 0,100% 82%,0 100%);
   shape-outside: polygon(0 0,100% 0,100% 82%,0 100%);
 }
-.bbv imagen.diagonal.abajo {
+.bbv-rolpost imagen.diagonal.abajo {
   clip-path: polygon(0 18%,100% 0,100% 100%,0 100%);
   shape-outside: polygon(0 18%,100% 0,100% 100%,0 100%);
 }
-.bbv imagen.diagonal.izq {
+.bbv-rolpost imagen.diagonal.izq {
   clip-path: polygon(0 0,100% 0,82% 100%,0 100%);
   shape-outside: polygon(0 0,100% 0,82% 100%,0 100%);
   shape-margin: 14px;
 }
-.bbv imagen.diagonal.der {
+.bbv-rolpost imagen.diagonal.der {
   clip-path: polygon(0 0,100% 0,100% 100%,18% 100%);
   shape-outside: polygon(0 0,100% 0,100% 100%,18% 100%);
   shape-margin: 14px;
 }
-.bbv imagen.circulo {
-  width: var(--alto, 220px); height: var(--alto, 220px);
+.bbv-rolpost imagen.circulo {
+  width: var(--height, 220px); height: var(--height, 220px);
   border: 2px solid var(--_c); border-radius: 50%; overflow: hidden;
   shape-outside: circle(50%); shape-margin: 14px;
 }
-.bbv imagen.hexagono {
-  width: calc(var(--alto, 240px) * 1.15); height: var(--alto, 240px);
+.bbv-rolpost imagen.hexagono {
+  width: calc(var(--height, 240px) * 1.15); height: var(--height, 240px);
   border: 0;
   clip-path: polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%);
   shape-outside: polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%);
   shape-margin: 14px;
 }
-.bbv imagen.arco {
-  width: calc(var(--alto, 260px) * .8); height: var(--alto, 260px);
+.bbv-rolpost imagen.arco {
+  width: calc(var(--height, 260px) * .8); height: var(--height, 260px);
   border: 2px solid var(--_c); border-radius: 999px 999px 0 0; overflow: hidden;
   shape-outside: inset(0 round 999px 999px 0 0); shape-margin: 14px;
 }
-.bbv imagen:is(.circulo,.hexagono,.arco):not(.izq):not(.der) { margin: 22px auto; }
-.bbv imagen:is(.circulo,.hexagono,.arco).izq { margin: 22px 24px 14px 28px; }
-.bbv imagen:is(.circulo,.hexagono,.arco).der { margin: 22px 28px 14px 24px; }
+.bbv-rolpost imagen:is(.circulo,.hexagono,.arco):not(.izq):not(.der) { margin: 22px auto; }
+.bbv-rolpost imagen:is(.circulo,.hexagono,.arco).izq { margin: 22px 24px 14px 28px; }
+.bbv-rolpost imagen:is(.circulo,.hexagono,.arco).der { margin: 22px 28px 14px 24px; }
+
+/* ── BANDA: horizontal, a todo el ancho del cajón ── */
+.bbv-rolpost imagen.banda {
+  clear: both; height: var(--height, 160px);
+  border-top: 1px solid var(--_c); border-bottom: 1px solid var(--_c);
+}
+.bbv-rolpost texto imagen.banda { margin: 18px -34px; }
+
+/* ── BANDA DE FONDO: horizontal, detrás del texto (arriba; con "abajo", al pie) ── */
+.bbv-rolpost imagen.banda.fondo {
+  position: absolute; left: 0; right: 0; top: 0; bottom: auto;
+  height: var(--height, 200px); margin: 0; border: 0; z-index: -1;
+}
+.bbv-rolpost imagen.banda.fondo.abajo { top: auto; bottom: 0; }
+.bbv-rolpost imagen.banda.fondo::after {
+  background: linear-gradient(180deg, rgba(8,8,8,0) 0%, rgba(8,8,8,var(--overlay,.9)) 100%);
+}
+.bbv-rolpost imagen.banda.fondo.abajo::after {
+  background: linear-gradient(0deg, rgba(8,8,8,0) 0%, rgba(8,8,8,var(--overlay,.9)) 100%);
+}
+
+/* ── COLUMNA: vertical, a toda la altura, en su propio cajón (el texto se ajusta) ── */
+.bbv-rolpost:has(> imagen.columna-izq) { display: grid; grid-template-columns: auto minmax(0,1fr); }
+.bbv-rolpost:has(> imagen.columna-der) { display: grid; grid-template-columns: minmax(0,1fr) auto; }
+.bbv-rolpost:has(> imagen.columna-izq) > :not(imagen.columna-izq) { grid-column: 2; }
+.bbv-rolpost:has(> imagen.columna-der) > :not(imagen.columna-der) { grid-column: 1; }
+.bbv-rolpost imagen.columna-izq,
+.bbv-rolpost imagen.columna-der {
+  width: var(--img-width, 180px); height: auto; margin: 0;
+  grid-row: 1 / span 30; align-self: stretch;
+}
+.bbv-rolpost imagen.columna-izq { grid-column: 1; border-right: 2px solid var(--_c); }
+.bbv-rolpost imagen.columna-der { grid-column: 2; border-left: 2px solid var(--_c); }
+
+/* ── FONDO LATERAL: vertical, detrás del texto, pegada al lateral ── */
+.bbv-rolpost imagen.fondo-izq,
+.bbv-rolpost imagen.fondo-der {
+  position: absolute; top: 0; bottom: 0; height: auto; margin: 0;
+  width: var(--img-width, 220px); z-index: -1;
+}
+.bbv-rolpost imagen.fondo-izq { left: 0; }
+.bbv-rolpost imagen.fondo-der { right: 0; }
+.bbv-rolpost imagen.fondo-izq::after {
+  background: linear-gradient(90deg, rgba(8,8,8,0) 0%, rgba(8,8,8,var(--overlay,.9)) 100%);
+}
+.bbv-rolpost imagen.fondo-der::after {
+  background: linear-gradient(270deg, rgba(8,8,8,0) 0%, rgba(8,8,8,var(--overlay,.9)) 100%);
+}
 
 
 ══════════════════════════════════════════════════════════════
@@ -200,7 +253,7 @@
 
 CÓDIGO MÍNIMO (solo <texto> es obligatorio; lo demás es opcional):
 
-<div class="bbv">
+<div class="bbv-rolpost">
 <titulo>Título</titulo>
 <sub>Subtítulo</sub>
 <texto>Aquí va tu post...</texto>
@@ -209,7 +262,7 @@ CÓDIGO MÍNIMO (solo <texto> es obligatorio; lo demás es opcional):
 
 Usa [b] y [u] normalmente dentro de <texto>: salen con el color de la tablilla.
 
-── CLASES (se escriben en el div: class="bbv f-cinzel ancho-m marco") ──
+── CLASES (se escriben en el div: class="bbv-rolpost f-cinzel ancho-m marco") ──
 Fuente:  f-cinzel · f-garamond · f-playfair · f-mincho · f-maquina · f-mano
 Ancho:   ancho-s (450) · ancho-m (550) · ancho-l (650, por defecto) · ancho-full
 Color:   c-shinigami · c-quincy · c-hollow · c-fullbringer · c-dorado · c-violeta · c-rosa
@@ -217,38 +270,64 @@ Extras:  marco (borde interior) · glow (resplandor) · just (texto justificado)
 
 Si no pones color, usa el color de tu grupo.
 
-── AJUSTES FINOS (en style="", todos opcionales) ──
-<div class="bbv" style="--c:#8e44ad; --fondo:url(IMAGEN); --velo:.8; --fuente:Georgia; --tam:14px">
+── AJUSTES DE LA CAJA (en el style del div, todos opcionales) ──
+<div class="bbv-rolpost" style="--color:#8e44ad; --bg:url(IMAGEN); --overlay:.8; --font:Georgia; --size:14px">
 
---c       color de acento (cualquier color: #8e44ad, crimson…)
---fondo   imagen de fondo de toda la caja: url(https://...)
---velo    oscuridad sobre el fondo: 0 (nada) a 1 (negro). Por defecto .9
---fuente  fuente libre (cualquiera instalada en tu equipo, ej. Georgia)
---fuente-t fuente solo del título
---tam     tamaño del texto (13px por defecto)
---tam-t   tamaño del título (26px por defecto)
+--color     color de acento (cualquier color: #8e44ad, crimson…)
+--bg        imagen de fondo de toda la caja: url(https://...)
+--overlay   oscuridad sobre el fondo: 0 (nada) a 1 (negro). Por defecto .9
+--font      fuente libre (cualquiera instalada en tu equipo, ej. Georgia)
+--t-font    fuente solo del título
+--size      tamaño del texto (13px por defecto)
+--t-size    tamaño del título (26px por defecto)
 
 ── IMAGEN DECORATIVA ──
 <imagen class="der diagonal" style="background-image:url(https://...)"></imagen>
 
-Posición:  arriba (por defecto) · abajo · izq · der
-           izq y der hacen que el texto rodee la imagen.
-Forma:     diagonal · circulo · hexagono · arco
-Ajustes:   --alto (altura, ej. 300px) · --ancho-img (solo izq/der, ej. 40%) · --pos (encuadre, ej. top)
+La imagen aparece en el lugar del código donde la escribas.
+Ajustes (ponlos en el style de cada <imagen>):
+  --height     altura (ej. 300px)
+  --img-width  ancho (solo izq, der, columnas y fondos laterales; ej. 40%, 200px)
+  --pos        encuadre de la foto (ej. top, center 20%)
 
-DÓNDE PONERLA: la imagen aparece en el lugar del código donde la escribas.
- - Arriba del todo: antes de <titulo>.
- - Al lado del texto (izq/der): justo antes de <texto>.
- - Abajo: después de <texto> y antes de <pie>.
+TIPOS DE IMAGEN
+┌──────────────────────┬────────────────────────────────────────────────────────┐
+│ arriba · abajo       │ Ancho completo, en el sitio del código (antes del      │
+│                      │ título = arriba; después del texto = abajo).           │
+├──────────────────────┼────────────────────────────────────────────────────────┤
+│ izq · der            │ Al lado del texto, que la rodea. Se escribe justo      │
+│                      │ antes de <texto>. Combínala con una forma (ver abajo). │
+├──────────────────────┼────────────────────────────────────────────────────────┤
+│ banda                │ Franja horizontal a todo el ancho. Puede ir entre      │
+│                      │ párrafos, DENTRO de <texto>.                           │
+├──────────────────────┼────────────────────────────────────────────────────────┤
+│ banda fondo          │ Imagen horizontal detrás del texto, arriba del todo,   │
+│                      │ difuminada hacia abajo. Con "banda fondo abajo", al    │
+│                      │ pie y difuminada hacia arriba.                         │
+├──────────────────────┼────────────────────────────────────────────────────────┤
+│ columna-izq          │ Imagen vertical a toda la altura, en su propio cajón   │
+│ columna-der          │ en el lateral. El texto se ajusta al espacio restante. │
+├──────────────────────┼────────────────────────────────────────────────────────┤
+│ fondo-izq            │ Imagen vertical a toda la altura, detrás del texto,    │
+│ fondo-der            │ pegada al lateral y difuminada hacia el centro.        │
+└──────────────────────┴────────────────────────────────────────────────────────┘
+
+FORMAS (solo con arriba, abajo, izq o der): diagonal · circulo · hexagono · arco
+  Ej.: class="izq circulo"  ·  class="abajo diagonal"
+
+NO COMBINAR: columna-izq/columna-der con izq/der (el texto no puede rodear una
+imagen y a la vez ir en columna). El resto de combinaciones sí funcionan.
 
 ── SEPARADORES (dentro de <texto> o entre bloques) ──
-<sep></sep>            línea con degradado
+<sep></sep>                 línea con degradado
 <sep class="rombo"></sep>   línea con rombo central
-<sep>✦</sep>           símbolo o kanji libre en el centro (魂 · ✧ · ❖ · ※)
+<sep>✦</sep>                símbolo o kanji libre en el centro (魂 · ✧ · ❖ · ※)
 
-── EJEMPLO COMPLETO ──
+── EJEMPLOS ──
 
-<div class="bbv f-garamond marco" style="--fondo:url(https://...); --velo:.85">
+1) Imagen a la izquierda, con el texto rodeándola:
+
+<div class="bbv-rolpost f-garamond marco" style="--bg:url(https://...); --overlay:.85">
 <imagen class="izq diagonal" style="background-image:url(https://...)"></imagen>
 <titulo>El Abismo</titulo>
 <sub>Seireitei · Noche cerrada</sub>
@@ -256,4 +335,31 @@ DÓNDE PONERLA: la imagen aparece en el lugar del código donde la escribas.
 <sep class="rombo"></sep>
 Segundo párrafo con [b]énfasis[/b].</texto>
 <pie>Día 3 · 23:40 · Lluvia</pie>
+</div>
+
+2) Columna lateral con la imagen en su propio cajón:
+
+<div class="bbv-rolpost c-quincy">
+<imagen class="columna-izq" style="background-image:url(https://...); --img-width:200px"></imagen>
+<titulo>Hirenkyaku</titulo>
+<texto>El post va aquí...</texto>
+<pie>Wandenreich · Madrugada</pie>
+</div>
+
+3) Banda entre párrafos y banda de fondo arriba:
+
+<div class="bbv-rolpost c-dorado">
+<imagen class="banda fondo" style="background-image:url(https://...); --height:220px"></imagen>
+<titulo>Karakura</titulo>
+<texto>Primer párrafo...
+<imagen class="banda" style="background-image:url(https://...)"></imagen>
+Segundo párrafo...</texto>
+</div>
+
+4) Imagen vertical de fondo en el lateral derecho:
+
+<div class="bbv-rolpost c-shinigami">
+<imagen class="fondo-der" style="background-image:url(https://...); --img-width:260px"></imagen>
+<titulo>Gotei 13</titulo>
+<texto>El texto se lee sobre la imagen difuminada...</texto>
 </div>
