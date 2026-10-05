@@ -47,9 +47,9 @@
 .bbv-rolpost texto sep + br { display: none; }
 
 /* ── Anchos ── */
-.bbv-rolpost.ancho-s { max-width: 450px; }
-.bbv-rolpost.ancho-m { max-width: 550px; }
-.bbv-rolpost.ancho-l { max-width: 650px; }
+.bbv-rolpost.ancho-s { max-width: 500px; }
+.bbv-rolpost.ancho-m { max-width: 600px; }
+.bbv-rolpost.ancho-l { max-width: 700px; }
 .bbv-rolpost.ancho-full { max-width: none; }
 
 /* ── Fuentes ── */
@@ -71,7 +71,7 @@
 
 /* ── Extras de caja ── */
 .bbv-rolpost.marco { outline: 1px solid color-mix(in srgb, var(--_c) 45%, transparent); outline-offset: -8px; }
-.bbv-rolpost.glow  { box-shadow: 0 0 35px color-mix(in srgb, var(--_c) 35%, transparent), 0 4px 40px rgba(0,0,0,.6); }
+.bbv-rolpost.glow  { box-shadow: 0 0 15px color-mix(in srgb, var(--_c) 35%, transparent), 0 4px 40px rgba(0,0,0,.3); }
 
 /* ── CAJÓN DEL TÍTULO (título + subtítulo) ── */
 .bbv-rolpost titulo {
@@ -103,7 +103,7 @@
 .bbv-rolpost texto {
   display: block; position: relative; isolation: isolate;
   padding: 26px 34px;
-  font-size: var(--size, 13px); line-height: 1.85;
+  font-size: var(--size, 14px); line-height: 1.85;
   text-align: left; color: rgba(255,255,255,.8);
 }
 .bbv-rolpost.just texto { text-align: justify; }
