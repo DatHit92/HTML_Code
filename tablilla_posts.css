@@ -16,11 +16,12 @@
 
 .bbv-rolpost {
   --_c: var(--color, var(--grupo-color, var(--color1)));
+  --_bs: var(--border-size, 2px);
+  --_bc: color-mix(in srgb, var(--_c) calc(var(--border-opacity, .8) * 100%), transparent);
   position: relative;
   isolation: isolate;
   display: flow-root;
-  overflow: hidden;   /* respaldo para navegadores antiguos */
-  overflow: clip;     /* recorta sin bloquear el scroll de la imagen fija */
+  overflow: visible;  /* cualquier otro valor bloquea el scroll de la imagen fija */
   width: 100%;
   max-width: 650px;
   margin: 20px auto;
@@ -28,8 +29,7 @@
     linear-gradient(rgba(8,8,8,var(--overlay,.9)), rgba(8,8,8,var(--overlay,.9))),
     var(--bg, none) center/cover no-repeat,
     var(--fondo3);
-  border: var(--borde2);
-  border-top: 2px solid var(--_c);
+  border: var(--_bs) solid var(--_bc);
   box-shadow: 0 4px 40px rgba(0,0,0,.6);
   font-family: var(--font, 'Noto Serif JP', serif);
   color: var(--textobase);
@@ -82,7 +82,7 @@
   color: var(--_c);
   text-shadow: 0 0 30px color-mix(in srgb, var(--_c) 45%, transparent);
 }
-.bbv-rolpost titulo:has(+ sub) { padding-bottom: 8px; }
+.bbv-rolpost titulo:has(~ sub) { padding-bottom: 8px; }
 .bbv-rolpost sub {
   display: block; vertical-align: baseline; position: static;
   text-align: center; padding: 0 32px 22px;
@@ -93,8 +93,8 @@
 .bbv-rolpost titulo, .bbv-rolpost sub {
   background: rgba(8,8,8,var(--bar-overlay,.75));
 }
-.bbv-rolpost titulo:not(:has(+ sub)), .bbv-rolpost sub {
-  border-bottom: 2px solid var(--_c);
+.bbv-rolpost titulo:not(:has(~ sub)), .bbv-rolpost sub {
+  border-bottom: var(--_bs) solid var(--_bc);
 }
 
 /* ── Texto ── (position + isolation: las imágenes de fondo escritas
@@ -117,7 +117,7 @@
   text-transform: uppercase; font-weight: 600;
   color: rgba(255,255,255,.55);
   background: rgba(8,8,8,var(--bar-overlay,.75));
-  border-top: 2px solid var(--_c);
+  border-top: var(--_bs) solid var(--_bc);
 }
 .bbv-rolpost pie::before { content: '▴ '; color: var(--_c); }
 
@@ -146,6 +146,8 @@
 
 /* ══════════ IMAGEN DECORATIVA ══════════ */
 .bbv-rolpost imagen {
+  --_ib: var(--img-border-size, 2px);
+  --_ic: color-mix(in srgb, var(--_c) calc(var(--img-border-opacity, 1) * 100%), transparent);
   display: block; position: relative;
   height: var(--height, 200px);
   border-radius: var(--radius, 0);
@@ -155,15 +157,15 @@
   content: ''; position: absolute; inset: 0; border-radius: inherit;
   background: linear-gradient(135deg, color-mix(in srgb, var(--_c) 18%, transparent), transparent 60%);
 }
-.bbv-rolpost imagen.arriba { border-bottom: 2px solid var(--_c); }
-.bbv-rolpost imagen.abajo  { border-top: 2px solid var(--_c); }
+.bbv-rolpost imagen.arriba { border-bottom: var(--_ib) solid var(--_ic); }
+.bbv-rolpost imagen.abajo  { border-top: var(--_ib) solid var(--_ic); }
 .bbv-rolpost imagen.izq {
   float: left; width: var(--img-width, 36%); height: var(--height, 280px);
-  margin: 0 24px 14px 0; border-right: 2px solid var(--_c);
+  margin: 0 24px 14px 0; border-right: var(--_ib) solid var(--_ic);
 }
 .bbv-rolpost imagen.der {
   float: right; width: var(--img-width, 36%); height: var(--height, 280px);
-  margin: 0 0 14px 24px; border-left: 2px solid var(--_c);
+  margin: 0 0 14px 24px; border-left: var(--_ib) solid var(--_ic);
 }
 
 /* ── FIJO: vertical, en cajón propio entre el título y el pie,
@@ -182,7 +184,7 @@
 .bbv-rolpost imagen.fijo-der {
   position: sticky; top: 90px; align-self: start;
   width: var(--img-width, 180px); height: var(--height, 300px);
-  border: 2px solid var(--_c);
+  border: var(--_ib) solid var(--_ic);
 }
 .bbv-rolpost imagen.fijo-izq { grid-column: 1; margin: 22px 0 22px 26px; }
 .bbv-rolpost imagen.fijo-der { grid-column: 2; margin: 22px 26px 22px 0; }
@@ -211,7 +213,7 @@
 }
 .bbv-rolpost imagen.circulo {
   width: var(--height, 220px); height: var(--height, 220px);
-  border: 2px solid var(--_c); border-radius: 50%; overflow: hidden;
+  border: var(--_ib) solid var(--_ic); border-radius: 50%; overflow: hidden;
   shape-outside: circle(50%); shape-margin: 14px;
 }
 .bbv-rolpost imagen.hexagono {
@@ -223,7 +225,7 @@
 }
 .bbv-rolpost imagen.arco {
   width: calc(var(--height, 260px) * .8); height: var(--height, 260px);
-  border: 2px solid var(--_c); border-radius: 999px 999px 0 0; overflow: hidden;
+  border: var(--_ib) solid var(--_ic); border-radius: 999px 999px 0 0; overflow: hidden;
   shape-outside: inset(0 round 999px 999px 0 0); shape-margin: 14px;
 }
 .bbv-rolpost imagen:is(.circulo,.hexagono,.arco):not(.izq):not(.der):not(.fijo-izq):not(.fijo-der) { margin: 22px auto; }
@@ -234,8 +236,9 @@
 
 /* ── BANDA: horizontal, a todo el ancho del cajón ── */
 .bbv-rolpost imagen.banda {
+  --_ib: var(--img-border-size, 1px);
   clear: both; height: var(--height, 160px);
-  border-top: 1px solid var(--_c); border-bottom: 1px solid var(--_c);
+  border-top: var(--_ib) solid var(--_ic); border-bottom: var(--_ib) solid var(--_ic);
 }
 .bbv-rolpost texto imagen.banda { margin: 18px -34px; }
 
@@ -264,8 +267,8 @@
   width: var(--img-width, 180px); height: auto; margin: 0;
   grid-row: 1 / span 30; align-self: stretch;
 }
-.bbv-rolpost imagen.columna-izq { grid-column: 1; border-right: 2px solid var(--_c); }
-.bbv-rolpost imagen.columna-der { grid-column: 2; border-left: 2px solid var(--_c); }
+.bbv-rolpost imagen.columna-izq { grid-column: 1; border-right: var(--_ib) solid var(--_ic); }
+.bbv-rolpost imagen.columna-der { grid-column: 2; border-left: var(--_ib) solid var(--_ic); }
 
 /* ── FONDO LATERAL: vertical, detrás del texto, pegada al lateral ──
    Dentro de <texto>: entre el título y el pie. Fuera de <texto>: toda la caja. */
@@ -281,6 +284,13 @@
 }
 .bbv-rolpost imagen.fondo-der::after {
   background: linear-gradient(270deg, rgba(8,8,8,0) 0%, rgba(8,8,8,var(--overlay,.9)) 100%);
+}
+
+/* ── Necesario para FIJO: .post-contenido tiene overflow:hidden y bloquea el scroll fijo.
+      Solo afecta a los posts que usan una imagen fijo-… ── */
+.post-contenido:has(.bbv-rolpost > imagen[class*="fijo-"]) {
+  overflow: visible !important;
+  display: flow-root;
 }
 
 
@@ -315,6 +325,8 @@ Si no pones color, usa el color de tu grupo.
 --bg           imagen de fondo de toda la caja: url(https://...)
 --overlay      oscuridad sobre el fondo: 0 (nada) a 1 (negro). Por defecto .9
 --bar-overlay  opacidad de los cajones de título y pie: 0 (transparente) a 1 (sólido). Por defecto .75
+--border-size    grosor del borde de la caja y de las líneas del título y del pie (2px por defecto; 0 = sin borde)
+--border-opacity opacidad de esos bordes: 0 a 1 (.8 por defecto)
 --font         fuente libre (cualquiera instalada en tu equipo, ej. Georgia)
 --t-font       fuente solo del título
 --size         tamaño del texto (13px por defecto)
@@ -329,6 +341,9 @@ Ajustes (ponlos en el style de cada <imagen>):
   --img-width  ancho (solo izq, der, fijo, columnas y fondos laterales; ej. 40%, 200px)
   --pos        encuadre de la foto (ej. top, center 20%)
   --radius     esquinas redondeadas (ej. 20px). Con circulo/hexagono/arco no hace falta.
+  --img-border-size     grosor del borde de la imagen (2px por defecto, 1px en banda; 0 = sin borde)
+  --img-border-opacity  opacidad del borde de la imagen: 0 a 1 (1 por defecto)
+  (diagonal y hexagono recortan el borde con clip-path, así que no lo muestran)
 
 TIPOS DE IMAGEN
 ┌──────────────────────┬────────────────────────────────────────────────────────┐
