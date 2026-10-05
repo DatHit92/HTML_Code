@@ -1,6 +1,6 @@
 ══════════════════════════════════════════════════════════════
  1) HEADER (.tpl) — pegar justo debajo del <link> de Noto Serif JP
-    (si ya lo pegaste en la versión anterior, no hace falta repetirlo)
+    (si ya lo pegaste en versiones anteriores, no hace falta repetirlo)
 ══════════════════════════════════════════════════════════════
 
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Shippori+Mincho:wght@400;600;800&family=Special+Elite&family=Caveat:wght@400;700&display=swap" rel="stylesheet">
@@ -8,7 +8,7 @@
 
 ══════════════════════════════════════════════════════════════
  2) CSS — pegar al final del panel CSS (o en bbv.css externo)
-    Sustituye por completo el bloque anterior ".bbv"
+    Sustituye por completo el bloque anterior ".bbv-rolpost"
 ══════════════════════════════════════════════════════════════
 
 /* ══════════ TABLILLA DE POST (.bbv-rolpost) ══════════ */
@@ -18,7 +18,9 @@
   --_c: var(--color, var(--grupo-color, var(--color1)));
   position: relative;
   isolation: isolate;
-  overflow: hidden;
+  display: flow-root;
+  overflow: hidden;   /* respaldo para navegadores antiguos */
+  overflow: clip;     /* recorta sin bloquear el scroll de la imagen fija */
   width: 100%;
   max-width: 650px;
   margin: 20px auto;
@@ -70,7 +72,7 @@
 .bbv-rolpost.marco { outline: 1px solid color-mix(in srgb, var(--_c) 45%, transparent); outline-offset: -8px; }
 .bbv-rolpost.glow  { box-shadow: 0 0 35px color-mix(in srgb, var(--_c) 35%, transparent), 0 4px 40px rgba(0,0,0,.6); }
 
-/* ── Título y subtítulo ── */
+/* ── CAJÓN DEL TÍTULO (título + subtítulo) ── */
 .bbv-rolpost titulo {
   display: block; text-align: center;
   padding: 30px 32px 22px;
@@ -88,28 +90,34 @@
   text-transform: uppercase; font-weight: 600;
   color: rgba(255,255,255,.5);
 }
+.bbv-rolpost titulo, .bbv-rolpost sub {
+  background: rgba(8,8,8,var(--bar-overlay,.75));
+}
+.bbv-rolpost titulo:not(:has(+ sub)), .bbv-rolpost sub {
+  border-bottom: 2px solid var(--_c);
+}
 
-/* ── Texto ── */
+/* ── Texto ── (position + isolation: las imágenes de fondo escritas
+      dentro de <texto> quedan entre el cajón del título y el del pie) */
 .bbv-rolpost texto {
-  display: block; padding: 26px 34px;
+  display: block; position: relative; isolation: isolate;
+  padding: 26px 34px;
   font-size: var(--size, 13px); line-height: 1.85;
   text-align: left; color: rgba(255,255,255,.8);
 }
 .bbv-rolpost.just texto { text-align: justify; }
-.bbv-rolpost titulo ~ texto, .bbv-rolpost sub ~ texto {
-  border-top: 1px solid color-mix(in srgb, var(--_c) 30%, transparent);
-}
 .bbv-rolpost strong { color: var(--_c); }
 .bbv-rolpost u { text-decoration: none; border-bottom: 1px solid var(--_c); }
 .bbv-rolpost a { color: var(--_c); }
 
-/* ── Pie ── */
+/* ── CAJÓN DEL PIE ── */
 .bbv-rolpost pie {
   display: block; clear: both; text-align: center;
   padding: 13px 24px; font-size: 10px; letter-spacing: 2px;
   text-transform: uppercase; font-weight: 600;
-  color: rgba(255,255,255,.55); background: rgba(0,0,0,.4);
-  border-top: 1px solid color-mix(in srgb, var(--_c) 30%, transparent);
+  color: rgba(255,255,255,.55);
+  background: rgba(8,8,8,var(--bar-overlay,.75));
+  border-top: 2px solid var(--_c);
 }
 .bbv-rolpost pie::before { content: '▴ '; color: var(--_c); }
 
@@ -140,6 +148,7 @@
 .bbv-rolpost imagen {
   display: block; position: relative;
   height: var(--height, 200px);
+  border-radius: var(--radius, 0);
   background-size: cover; background-position: var(--pos, center); background-repeat: no-repeat;
 }
 .bbv-rolpost imagen::after {
@@ -157,7 +166,28 @@
   margin: 0 0 14px 24px; border-left: 2px solid var(--_c);
 }
 
-/* ── Formas ── */
+/* ── FIJO: vertical, en cajón propio entre el título y el pie,
+      con el texto a su lado; sigue el scroll de la página ── */
+.bbv-rolpost:has(> imagen.fijo-izq) {
+  display: grid; grid-template-columns: auto minmax(0,1fr); grid-auto-flow: row dense;
+}
+.bbv-rolpost:has(> imagen.fijo-der) {
+  display: grid; grid-template-columns: minmax(0,1fr) auto; grid-auto-flow: row dense;
+}
+.bbv-rolpost:has(> imagen.fijo-izq) > :is(titulo, sub, pie),
+.bbv-rolpost:has(> imagen.fijo-der) > :is(titulo, sub, pie) { grid-column: 1 / -1; }
+.bbv-rolpost:has(> imagen.fijo-izq) > texto { grid-column: 2; }
+.bbv-rolpost:has(> imagen.fijo-der) > texto { grid-column: 1; }
+.bbv-rolpost imagen.fijo-izq,
+.bbv-rolpost imagen.fijo-der {
+  position: sticky; top: 90px; align-self: start;
+  width: var(--img-width, 180px); height: var(--height, 300px);
+  border: 2px solid var(--_c);
+}
+.bbv-rolpost imagen.fijo-izq { grid-column: 1; margin: 22px 0 22px 26px; }
+.bbv-rolpost imagen.fijo-der { grid-column: 2; margin: 22px 26px 22px 0; }
+
+/* ── Formas (arriba, abajo, izq, der, fijo-izq, fijo-der) ── */
 .bbv-rolpost imagen.diagonal {
   border: 0;
   clip-path: polygon(0 0,100% 0,100% 82%,0 100%);
@@ -167,12 +197,14 @@
   clip-path: polygon(0 18%,100% 0,100% 100%,0 100%);
   shape-outside: polygon(0 18%,100% 0,100% 100%,0 100%);
 }
-.bbv-rolpost imagen.diagonal.izq {
+.bbv-rolpost imagen.diagonal.izq,
+.bbv-rolpost imagen.diagonal.fijo-izq {
   clip-path: polygon(0 0,100% 0,82% 100%,0 100%);
   shape-outside: polygon(0 0,100% 0,82% 100%,0 100%);
   shape-margin: 14px;
 }
-.bbv-rolpost imagen.diagonal.der {
+.bbv-rolpost imagen.diagonal.der,
+.bbv-rolpost imagen.diagonal.fijo-der {
   clip-path: polygon(0 0,100% 0,100% 100%,18% 100%);
   shape-outside: polygon(0 0,100% 0,100% 100%,18% 100%);
   shape-margin: 14px;
@@ -194,9 +226,11 @@
   border: 2px solid var(--_c); border-radius: 999px 999px 0 0; overflow: hidden;
   shape-outside: inset(0 round 999px 999px 0 0); shape-margin: 14px;
 }
-.bbv-rolpost imagen:is(.circulo,.hexagono,.arco):not(.izq):not(.der) { margin: 22px auto; }
+.bbv-rolpost imagen:is(.circulo,.hexagono,.arco):not(.izq):not(.der):not(.fijo-izq):not(.fijo-der) { margin: 22px auto; }
 .bbv-rolpost imagen:is(.circulo,.hexagono,.arco).izq { margin: 22px 24px 14px 28px; }
 .bbv-rolpost imagen:is(.circulo,.hexagono,.arco).der { margin: 22px 28px 14px 24px; }
+.bbv-rolpost imagen:is(.circulo,.hexagono,.arco).fijo-izq { margin: 22px 0 22px 26px; }
+.bbv-rolpost imagen:is(.circulo,.hexagono,.arco).fijo-der { margin: 22px 26px 22px 0; }
 
 /* ── BANDA: horizontal, a todo el ancho del cajón ── */
 .bbv-rolpost imagen.banda {
@@ -205,7 +239,9 @@
 }
 .bbv-rolpost texto imagen.banda { margin: 18px -34px; }
 
-/* ── BANDA DE FONDO: horizontal, detrás del texto (arriba; con "abajo", al pie) ── */
+/* ── BANDA DE FONDO: horizontal, detrás del texto ──
+   Dentro de <texto>: va del borde inferior del título al borde superior del pie.
+   Fuera de <texto>: cubre toda la caja. Con "abajo", pegada al borde inferior. */
 .bbv-rolpost imagen.banda.fondo {
   position: absolute; left: 0; right: 0; top: 0; bottom: auto;
   height: var(--height, 200px); margin: 0; border: 0; z-index: -1;
@@ -218,7 +254,7 @@
   background: linear-gradient(0deg, rgba(8,8,8,0) 0%, rgba(8,8,8,var(--overlay,.9)) 100%);
 }
 
-/* ── COLUMNA: vertical, a toda la altura, en su propio cajón (el texto se ajusta) ── */
+/* ── COLUMNA: vertical, a toda la altura de la caja, en su propio cajón ── */
 .bbv-rolpost:has(> imagen.columna-izq) { display: grid; grid-template-columns: auto minmax(0,1fr); }
 .bbv-rolpost:has(> imagen.columna-der) { display: grid; grid-template-columns: minmax(0,1fr) auto; }
 .bbv-rolpost:has(> imagen.columna-izq) > :not(imagen.columna-izq) { grid-column: 2; }
@@ -231,7 +267,8 @@
 .bbv-rolpost imagen.columna-izq { grid-column: 1; border-right: 2px solid var(--_c); }
 .bbv-rolpost imagen.columna-der { grid-column: 2; border-left: 2px solid var(--_c); }
 
-/* ── FONDO LATERAL: vertical, detrás del texto, pegada al lateral ── */
+/* ── FONDO LATERAL: vertical, detrás del texto, pegada al lateral ──
+   Dentro de <texto>: entre el título y el pie. Fuera de <texto>: toda la caja. */
 .bbv-rolpost imagen.fondo-izq,
 .bbv-rolpost imagen.fondo-der {
   position: absolute; top: 0; bottom: 0; height: auto; margin: 0;
@@ -261,6 +298,7 @@ CÓDIGO MÍNIMO (solo <texto> es obligatorio; lo demás es opcional):
 </div>
 
 Usa [b] y [u] normalmente dentro de <texto>: salen con el color de la tablilla.
+El título + subtítulo forman un cajón y el pie otro, ambos semitransparentes.
 
 ── CLASES (se escriben en el div: class="bbv-rolpost f-cinzel ancho-m marco") ──
 Fuente:  f-cinzel · f-garamond · f-playfair · f-mincho · f-maquina · f-mano
@@ -271,15 +309,16 @@ Extras:  marco (borde interior) · glow (resplandor) · just (texto justificado)
 Si no pones color, usa el color de tu grupo.
 
 ── AJUSTES DE LA CAJA (en el style del div, todos opcionales) ──
-<div class="bbv-rolpost" style="--color:#8e44ad; --bg:url(IMAGEN); --overlay:.8; --font:Georgia; --size:14px">
+<div class="bbv-rolpost" style="--color:#8e44ad; --bg:url(IMAGEN); --overlay:.8; --bar-overlay:.6; --font:Georgia; --size:14px">
 
---color     color de acento (cualquier color: #8e44ad, crimson…)
---bg        imagen de fondo de toda la caja: url(https://...)
---overlay   oscuridad sobre el fondo: 0 (nada) a 1 (negro). Por defecto .9
---font      fuente libre (cualquiera instalada en tu equipo, ej. Georgia)
---t-font    fuente solo del título
---size      tamaño del texto (13px por defecto)
---t-size    tamaño del título (26px por defecto)
+--color        color de acento (cualquier color: #8e44ad, crimson…)
+--bg           imagen de fondo de toda la caja: url(https://...)
+--overlay      oscuridad sobre el fondo: 0 (nada) a 1 (negro). Por defecto .9
+--bar-overlay  opacidad de los cajones de título y pie: 0 (transparente) a 1 (sólido). Por defecto .75
+--font         fuente libre (cualquiera instalada en tu equipo, ej. Georgia)
+--t-font       fuente solo del título
+--size         tamaño del texto (13px por defecto)
+--t-size       tamaño del título (26px por defecto)
 
 ── IMAGEN DECORATIVA ──
 <imagen class="der diagonal" style="background-image:url(https://...)"></imagen>
@@ -287,8 +326,9 @@ Si no pones color, usa el color de tu grupo.
 La imagen aparece en el lugar del código donde la escribas.
 Ajustes (ponlos en el style de cada <imagen>):
   --height     altura (ej. 300px)
-  --img-width  ancho (solo izq, der, columnas y fondos laterales; ej. 40%, 200px)
+  --img-width  ancho (solo izq, der, fijo, columnas y fondos laterales; ej. 40%, 200px)
   --pos        encuadre de la foto (ej. top, center 20%)
+  --radius     esquinas redondeadas (ej. 20px). Con circulo/hexagono/arco no hace falta.
 
 TIPOS DE IMAGEN
 ┌──────────────────────┬────────────────────────────────────────────────────────┐
@@ -298,27 +338,38 @@ TIPOS DE IMAGEN
 │ izq · der            │ Al lado del texto, que la rodea. Se escribe justo      │
 │                      │ antes de <texto>. Combínala con una forma (ver abajo). │
 ├──────────────────────┼────────────────────────────────────────────────────────┤
+│ fijo-izq · fijo-der  │ Cajón propio entre el título y el pie, con el texto    │
+│                      │ al lado. SIGUE EL SCROLL: queda visible mientras lees  │
+│                      │ hasta que acaba el post. 180×300px por defecto.        │
+│                      │ Se escribe fuera de <texto>, junto a él. Admite        │
+│                      │ formas y --radius.                                     │
+├──────────────────────┼────────────────────────────────────────────────────────┤
 │ banda                │ Franja horizontal a todo el ancho. Puede ir entre      │
 │                      │ párrafos, DENTRO de <texto>.                           │
 ├──────────────────────┼────────────────────────────────────────────────────────┤
-│ banda fondo          │ Imagen horizontal detrás del texto, arriba del todo,   │
-│                      │ difuminada hacia abajo. Con "banda fondo abajo", al    │
-│                      │ pie y difuminada hacia arriba.                         │
+│ banda fondo          │ Imagen horizontal detrás del texto, difuminada hacia   │
+│                      │ abajo. Con "banda fondo abajo", al pie y difuminada    │
+│                      │ hacia arriba. Escrita DENTRO de <texto>, empieza bajo  │
+│                      │ el cajón del título y acaba sobre el pie. Fuera de     │
+│                      │ <texto>, cubre toda la caja.                           │
 ├──────────────────────┼────────────────────────────────────────────────────────┤
-│ columna-izq          │ Imagen vertical a toda la altura, en su propio cajón   │
-│ columna-der          │ en el lateral. El texto se ajusta al espacio restante. │
+│ fondo-izq · fondo-der│ Imagen vertical detrás del texto, pegada al lateral y  │
+│                      │ difuminada hacia el centro. Mismas reglas que "banda   │
+│                      │ fondo": dentro de <texto> va entre título y pie.       │
 ├──────────────────────┼────────────────────────────────────────────────────────┤
-│ fondo-izq            │ Imagen vertical a toda la altura, detrás del texto,    │
-│ fondo-der            │ pegada al lateral y difuminada hacia el centro.        │
+│ columna-izq          │ Imagen vertical a toda la altura de la caja (también   │
+│ columna-der          │ junto al título y al pie), en su propio cajón. El      │
+│                      │ texto se ajusta al espacio restante.                   │
 └──────────────────────┴────────────────────────────────────────────────────────┘
 
-FORMAS (solo con arriba, abajo, izq o der): diagonal · circulo · hexagono · arco
-  Ej.: class="izq circulo"  ·  class="abajo diagonal"
+FORMAS (con arriba, abajo, izq, der, fijo-izq, fijo-der): diagonal · circulo · hexagono · arco
+  Ej.: class="fijo-izq circulo"  ·  class="abajo diagonal"
 
-NO COMBINAR: columna-izq/columna-der con izq/der (el texto no puede rodear una
-imagen y a la vez ir en columna). El resto de combinaciones sí funcionan.
+NO COMBINAR: columna-… ni fijo-… entre sí, ni con izq/der (el texto no puede
+rodear una imagen y a la vez ir en columna). Con fijo-…, lo extra (separadores,
+bandas, otras imágenes) va dentro de <texto>.
 
-── SEPARADORES (dentro de <texto> o entre bloques) ──
+── SEPARADORES (dentro de <texto>) ──
 <sep></sep>                 línea con degradado
 <sep class="rombo"></sep>   línea con rombo central
 <sep>✦</sep>                símbolo o kanji libre en el centro (魂 · ✧ · ❖ · ※)
@@ -337,29 +388,44 @@ Segundo párrafo con [b]énfasis[/b].</texto>
 <pie>Día 3 · 23:40 · Lluvia</pie>
 </div>
 
-2) Columna lateral con la imagen en su propio cajón:
+2) Imagen fija que acompaña al scroll, con esquinas redondeadas:
 
 <div class="bbv-rolpost c-quincy">
-<imagen class="columna-izq" style="background-image:url(https://...); --img-width:200px"></imagen>
 <titulo>Hirenkyaku</titulo>
-<texto>El post va aquí...</texto>
+<imagen class="fijo-izq" style="background-image:url(https://...); --radius:18px; --height:320px"></imagen>
+<texto>El post va aquí, y la imagen se queda visible al hacer scroll...</texto>
 <pie>Wandenreich · Madrugada</pie>
 </div>
 
-3) Banda entre párrafos y banda de fondo arriba:
+3) Imagen fija con forma de círculo a la derecha:
+
+<div class="bbv-rolpost c-hollow">
+<titulo>Las Noches</titulo>
+<imagen class="fijo-der circulo" style="background-image:url(https://...); --height:200px"></imagen>
+<texto>El texto queda a la izquierda...</texto>
+</div>
+
+4) Banda de fondo bajo el título y banda entre párrafos:
 
 <div class="bbv-rolpost c-dorado">
-<imagen class="banda fondo" style="background-image:url(https://...); --height:220px"></imagen>
 <titulo>Karakura</titulo>
-<texto>Primer párrafo...
+<texto><imagen class="banda fondo" style="background-image:url(https://...); --height:220px"></imagen>Primer párrafo...
 <imagen class="banda" style="background-image:url(https://...)"></imagen>
 Segundo párrafo...</texto>
 </div>
 
-4) Imagen vertical de fondo en el lateral derecho:
+5) Imagen vertical de fondo en el lateral derecho (entre título y pie):
 
 <div class="bbv-rolpost c-shinigami">
-<imagen class="fondo-der" style="background-image:url(https://...); --img-width:260px"></imagen>
 <titulo>Gotei 13</titulo>
-<texto>El texto se lee sobre la imagen difuminada...</texto>
+<texto><imagen class="fondo-der" style="background-image:url(https://...); --img-width:260px"></imagen>El texto se lee sobre la imagen difuminada...</texto>
+</div>
+
+6) Columna a toda la altura de la caja:
+
+<div class="bbv-rolpost c-violeta">
+<imagen class="columna-izq" style="background-image:url(https://...); --img-width:200px"></imagen>
+<titulo>Título</titulo>
+<texto>El post va aquí...</texto>
+<pie>Pie</pie>
 </div>
